@@ -1,6 +1,8 @@
 require "bridgetown"
 
 Bridgetown.load_tasks
+require "bridgetown-activerecord"
+BridgetownActiveRecord.load_tasks
 
 # Run rake without specifying any command to execute a deploy build by default.
 task default: :deploy
