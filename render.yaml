@@ -1,6 +1,7 @@
+# See https://render.com/docs/blueprint-spec
 services:
   - type: web
-    name: rdep
+    name: wikistumble
     env: static
     buildCommand: bin/bridgetown deploy
     staticPublishPath: ./output
@@ -8,6 +9,7 @@ services:
     envVars:
       - key: BRIDGETOWN_ENV
         value: production
+      - fromGroup: wikistumble-prod-envs
     headers:
       - path: /*
         name: X-Frame-Options
@@ -27,3 +29,17 @@ services:
       - path: /*
         name: Cache-Control
         value: "public, max-age=86400, s-max-age=86400"
+    routes:
+      - type: rewrite
+        source: /hello/*
+        destination: https://wikistumble-api.onrender.com/hello/*
+  - type: web
+    name: wikistumble-api
+    env: ruby
+    plan: free
+    buildCommand: bundle install && yarn install && bin/bridgetown frontend:build
+    startCommand: bin/bridgetown start
+    envVars:
+      - key: BRIDGETOWN_ENV
+        value: production
+      - fromGroup: wikistumble-prod-envs
