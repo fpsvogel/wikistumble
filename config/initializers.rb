@@ -16,6 +16,9 @@ Bridgetown.configure do |config|
   # The Dotenv gem to load environment variables from `.env`
   init :dotenv
 
+  # For <%= seo %>
+  init :"bridgetown-seo-tag"
+
   # Bridgetown SSR (aka dynamic rendering of content via Roda):
   init :ssr
 

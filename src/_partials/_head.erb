@@ -1,10 +1,17 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<% resource_title = strip_html(strip_newlines(title)) %>
-<title><% if resource_title != "Index" %><%= resource_title %> | <%= metadata.title %><% else %><%= metadata.title %>: <%= metadata.tagline %><% end %></title>
+<% resource_title = strip_html(strip_newlines(data.title)) %>
 
-<meta name="description" content="<%= metadata.description %>" />
+<%= seo title: !!data.title %>
+
+<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/images/favicon/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+<link rel="manifest" href="/images/favicon/site.webmanifest">
 
 <link rel="stylesheet" href="<%= webpack_path :css %>" />
 <script src="<%= webpack_path :js %>" defer></script>
 <%= live_reload_dev_js %>
+
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.9.2/dist/paper.min.css">
