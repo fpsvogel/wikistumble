@@ -1,0 +1,10 @@
+<div class="paper container">
+  <h2 style="margin:0 0 1rem 0"><%= title %></h2>
+  <p><em><%= description %></em></p>
+  <p><%= link_to url, url, target: "_blank" %></p>
+  <p><%= excerpt %></p>
+
+  <% unless thumbnail_source.nil? %>
+    <img src="<%= thumbnail_source %>">
+  <% end %>
+</div>

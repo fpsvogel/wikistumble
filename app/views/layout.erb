@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<%= csrf_token %>">
+
+    <%# CSS and JS %>
+    <link rel="stylesheet" href="https://unpkg.com/papercss@1.9.2/dist/paper.min.css">
+    <script type="module" src="https://cdn.skypack.dev/@hotwired/turbo"></script>
+    <%= assets(:css) %>
+    <%= assets(:js, type: "module") %>
+
+    <%# SEO %>
+    <title><%= content_for :title %></title>
+    <meta name="description" content="Discover Wikipedia articles through personalized recommendations." />
+    <meta property="og:title" content="Wiki Stumble: Explore Wikipedia" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:description" content="Discover Wikipedia articles through personalized recommendations." />
+    <link rel="canonical" href="http://localhost:4000/" />
+    <meta property="og:url" content="http://localhost:4000/" />
+    <meta property="og:site_name" content="Wiki Stumble" />
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2023-08-26T16:12:06-04:00" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="twitter:title" content="Wiki Stumble: Explore Wikipedia" />
+
+    <%# favicon %>
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/images/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicon/site.webmanifest">
+  </head>
+
+  <body>
+    <div class="paper container margin-top-large margin-bottom-large">
+      <div class="alert alert-primary margin-top-small">
+        This is a work in progress! Please check back in a few days. –Felipe, 8/26/2023
+      </div>
+
+      <main>
+        <%= yield %>
+      </main>
+    </div>
+
+    <%= partial "partials/footer" %>
+  </body>
+</html>

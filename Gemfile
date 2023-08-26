@@ -1,29 +1,23 @@
 source "https://rubygems.org"
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem "bridgetown", "~> 1.3.0"
-gem "bridgetown-seo-tag", "~> 6.0"
-gem "bridgetown-routes", "~> 1.3.0"
-# Using only Sequel, but the AR plugin is required for now.
-# See https://github.com/bridgetownrb/bridgetown-activerecord/pull/2
-gem "bridgetown-activerecord", "~> 2.2"
-gem "sequel-activerecord_connection", "~> 1.3"
+gem "roda", "~> 3.71"
+gem "puma", "~> 6.3"
+gem "rackup", "~> 2.1"
+
+gem "sequel", "~> 5.71"
+gem "pg", "~> 1.5"
+gem "sequel_tools", "~> 0.1.14"
+# TODO https://github.com/jeremyevans/sequel-annotate
+# TODO https://github.com/jeremyevans/sequel_postgresql_triggers
+# TODO compare https://github.com/jeremyevans/roda-sequel-stack and https://gitlab.com/nini1294/roda-template-simple
+
+gem "tilt", "~> 2.2"
+gem "erubi", "~> 1.12"
+gem "forme", "~> 2.4"
 gem "roda-turbo", "~> 1.0"
 
-gem "puma", "< 7"
-gem "pg", "~> 1.5"
+gem "zeitwerk", "~> 2.6"
+gem "listen", "~> 3.8"
+gem "dry-configurable", "~> 0.15.0"
 gem "dotenv", "~> 2.8"
-
-group :development do
-  gem "annotate", "~> 3.2"
-  gem "debug", "~> 1.8"
-end
-
-group :test, optional: true do
-  gem "nokogiri"
-  gem "minitest"
-  gem "minitest-profile"
-  gem "minitest-reporters"
-  gem "shoulda"
-  gem "rails-dom-testing"
-end
+gem "concurrent-ruby", "~> 1.2"

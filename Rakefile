@@ -1,51 +1,32 @@
-require "bridgetown"
+require "bundler/setup"
+require_relative "config/settings"
+require "sequel_tools"
+require "sequel/core"
 
-Bridgetown.load_tasks
-require "bridgetown-activerecord"
-BridgetownActiveRecord.load_tasks
+# db = Sequel.connect(Settings.database_url, test: false, keep_reference: false)
 
-# Run rake without specifying any command to execute a deploy build by default.
-task default: :deploy
-
-#
-# Standard set of tasks, which you can customize if you wish:
-#
-desc "Build the Bridgetown site for deployment"
-task :deploy => [:clean, "frontend:build"] do
-  Bridgetown::Commands::Build.start
-end
-
-desc "Build the site in a test environment"
-task :test do
-  ENV["BRIDGETOWN_ENV"] = "test"
-  Bridgetown::Commands::Build.start
-end
-
-desc "Runs the clean command"
-task :clean do
-  Bridgetown::Commands::Clean.start
-end
-
-namespace :frontend do
-  desc "Build the frontend with esbuild for deployment"
-  task :build do
-    sh "yarn run esbuild"
-  end
-
-  desc "Watch the frontend with esbuild during development"
-  task :dev do
-    sh "yarn run esbuild-dev"
-  rescue Interrupt
-  end
-end
-
-#
-# Add your own Rake tasks here! You can use `environment` as a prerequisite
-# in order to write automations or other commands requiring a loaded site.
-#
-# task :my_task => :environment do
-#   puts site.root_dir
-#   automation do
-#     say_status :rake, "I'm a Rake tast =) #{site.config.url}"
-#   end
+# namespace :db do
+#   SequelTools.inject_rake_tasks({
+#     dbadapter: db.opts[:adapter],
+#     dbname: db.opts[:database],
+#     dump_schema_on_migrate: Settings.env == "development",
+#     schema_location: "db/schema.sql",
+#     log_level: :info,
+#     sql_log_level: :info,
+#   }, self)
 # end
+
+desc "Open a ruby console with the application loaded"
+task :console => :boot do
+  require "irb"
+  ARGV.clear
+  IRB.start
+end
+
+task :backup do
+  system "pg_dump", db.opts[:database], out: "tmp/backup-#{Date.today.strftime("%Y%m%d")}.sql"
+end
+
+task :boot do
+  require_relative "config/boot"
+end

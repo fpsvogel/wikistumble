@@ -1,7 +1,5 @@
-# This file is used by Rack-based servers during the Bridgetown boot process.
+require_relative "config/boot"
 
-require "bridgetown-core/rack/boot"
+use ReloadMiddleware if Settings.env == "development"
 
-Bridgetown::Rack.boot
-
-run RodaApp.freeze.app # see server/roda_app.rb
+run -> (env) { Router.call(env) }
