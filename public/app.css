@@ -2,6 +2,10 @@ html.dark body {
   background: #41403e;
 }
 
+legend {
+  font-weight: bold;
+}
+
 /* Keep the footer at the bottom of the page. */
 
 html, body {

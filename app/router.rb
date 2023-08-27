@@ -3,7 +3,6 @@ class Router < Roda
 
   plugin :sessions, secret: Config.secret_key
   plugin :assets, css: "app.css", js: "app.js", path: Config.root.join("public"), css_dir: "", js_dir: "", timestamp_paths: true
-  plugin :cookies, domain: 'wikistumble.com'
   plugin :render, views: Config.root.join("app/views")
   plugin :partials
   plugin :route_csrf, require_request_specific_tokens: false, check_header: true
@@ -29,11 +28,23 @@ class Router < Roda
     check_csrf!
 
     r.root do
-      view "home"
+      # RM these temporary defaults after reactive (Turbo Streams) category scores are implemented
+      unless session['category_scores']
+        session['category_scores'] = OresCategories::DEFAULT
+        .map { |category| [category, 10] }
+        .to_h
+      end
+
+      form = ArticleForm.from_session(session)
+
+      view "home", locals: form.attributes_to_render
     end
 
     r.on "next" do
       r.post true do
+        form = ArticleForm.from_submit(r.params)
+        form.save(session)
+
         r.redirect root_path
       end
     end
