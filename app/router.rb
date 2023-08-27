@@ -1,4 +1,6 @@
 class Router < Roda
+  opts[:root] = Config.root
+
   plugin :sessions, secret: Config.secret_key
   plugin :assets, css: "app.css", js: "app.js", path: Config.root.join("public"), css_dir: "", js_dir: "", timestamp_paths: true
   plugin :cookies, domain: 'wikistumble.com'
@@ -14,11 +16,13 @@ class Router < Roda
   plugin :content_for
   plugin :typecast_params
   plugin :enhanced_logger
+  plugin :public
 
   path(:root, "/")
 
   route do |r|
     r.assets
+    r.public
 
     check_csrf!
 
