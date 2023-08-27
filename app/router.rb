@@ -12,13 +12,15 @@ class Router < Roda
   plugin :path
   plugin :status_303 # for Turbo
   plugin :turbo
-  plugin :forme_set, secret: Config.secret_key
+  # plugin :forme_set, secret: Config.secret_key
+  plugin :forme
   plugin :content_for
   plugin :typecast_params
   plugin :enhanced_logger
   plugin :public
 
   path(:root, "/")
+  path(:next, "/next")
 
   route do |r|
     r.assets
@@ -28,6 +30,12 @@ class Router < Roda
 
     r.root do
       view "home"
+    end
+
+    r.on "next" do
+      r.post true do
+        r.redirect root_path
+      end
     end
   end
 end

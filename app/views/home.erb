@@ -2,7 +2,10 @@
 
 <h1 style="margin:0 0 1rem 0">Wiki Stumble</h1>
 
-<%# partial partials/article_form %>
+<%= partial "partials/article_form", locals: {
+  starter_categories: "Biography, Visual arts*, History and Society.History",
+  article_type: :any,
+} %>
 
 <%= partial "partials/article", locals: {
   title: "Arnfinn Laudal",

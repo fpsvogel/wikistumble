@@ -1,0 +1,79 @@
+<% form @next, { method: :post, action: next_path }, wrapper: :div do |f| %>
+  <%# I couldn't get Forme to render radio buttons, so I'm using plain HTML %>
+  <%# not only for those but throughout the whole form for consistency. %>
+
+  <%# Starter categories %>
+  <label for="starter_categories">
+    What categories are you interested in? From <a target="_blank" href="https://www.mediawiki.org/wiki/ORES/Articletopic">this list.</a>
+  </label>
+  <input
+    value="<%= starter_categories %>"
+    class="margin-top-small"
+    style="width:100%"
+    type="text"
+    name="starter_categories"
+    id="starter_categories"
+  >
+
+  <%# Article type %>
+  <fieldset class="form-group margin-top margin-bottom-none">
+    <legend>Article type:</legend>
+
+    <label class="paper-radio margin-right" style="display:inline-block" for="article_type_any">
+      <input
+        type="radio"
+        value="any" <%= 'checked="checked"' if article_type == :any %>
+        name="article_type"
+        id="article_type_any"
+      >
+      <span>Any (fast)</span>
+    </label>
+
+    <label class="paper-radio margin-right" style="display:inline-block" for="article_type_good">
+      <input
+        type="radio"
+        value="good" <%= 'checked="checked"' if article_type == :good %>
+        name="article_type"
+        id="article_type_good"
+      >
+      <span>Good</span>
+    </label>
+
+    <label class="paper-radio" style="display:inline-block" for="article_type_featured">
+      <input
+        type="radio"
+        value="featured" <%= 'checked="checked"' if article_type == :featured %>
+        name="article_type"
+        id="article_type_featured"
+      >
+      <span>Featured</span>
+    </label>
+  </fieldset>
+
+  <%# Next article %>
+  <input type="submit" name="commit" value="Next article" class="paper-btn margin-top">
+
+  <%# Reaction %>
+  <fieldset class="form-group margin-top-large">
+    <legend>Did you like this article?</legend>
+
+    <label class="paper-radio margin-right-large" style="display:inline-block" for="reaction_like">
+      <input
+        type="radio"
+        value="1"
+        name="reaction"
+        id="reaction_like"
+      >
+      <span>👍</span>
+    </label>
+
+    <label class="paper-radio" style="display:inline-block" for="reaction_dislike">
+      <input
+        type="radio"
+        value="-1"
+         name="reaction"
+         id="reaction_dislike">
+      <span>👎</span>
+    </label>
+  </fieldset>
+<% end %>
