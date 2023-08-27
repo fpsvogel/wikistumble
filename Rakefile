@@ -8,7 +8,7 @@ Bundler.require(:default, Config.env)
 #   SequelTools.inject_rake_tasks({
 #     dbadapter: db.opts[:adapter],
 #     dbname: db.opts[:database],
-#     dump_schema_on_migrate: Config.env == "development",
+#     dump_schema_on_migrate: Config.development?,
 #     schema_location: "db/schema.sql",
 #     log_level: :info,
 #     sql_log_level: :info,

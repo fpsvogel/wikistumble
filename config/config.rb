@@ -4,6 +4,9 @@ require "pathname"
 class Config
   class << self
     attr_reader :root, :env, :db_url, :secret_key
+
+    def development? = env == "development"
+    def production? = env == "production"
   end
 
   @root = Pathname("#{__dir__}/..").expand_path
