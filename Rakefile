@@ -1,15 +1,14 @@
-require "bundler/setup"
-require_relative "config/settings"
-require "sequel_tools"
-require "sequel/core"
+require_relative "config/config"
+require "bundler"
+Bundler.require(:default, Config.env)
 
-# db = Sequel.connect(Settings.database_url, test: false, keep_reference: false)
+# db = Sequel.connect(Config.db_url, test: false, keep_reference: false)
 
 # namespace :db do
 #   SequelTools.inject_rake_tasks({
 #     dbadapter: db.opts[:adapter],
 #     dbname: db.opts[:database],
-#     dump_schema_on_migrate: Settings.env == "development",
+#     dump_schema_on_migrate: Config.env == "development",
 #     schema_location: "db/schema.sql",
 #     log_level: :info,
 #     sql_log_level: :info,
