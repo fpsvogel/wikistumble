@@ -1,0 +1,22 @@
+<h4>Your category scores:</h4>
+
+<% if category_scores.empty? %>
+  <p>None yet. Give a thumbs up/down to an article, or specify categories that you're interested in.</p>
+<% else %>
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% category_scores.each do |category, score| %>
+        <tr>
+          <td><%= category %></td>
+          <td><%= score %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
