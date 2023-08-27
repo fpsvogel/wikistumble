@@ -16,7 +16,7 @@ class Router < Roda
   plugin :forme
   plugin :content_for
   plugin :typecast_params
-  plugin :enhanced_logger
+  plugin :enhanced_logger if Config.env == "development"
   plugin :public
 
   path(:root, "/")
