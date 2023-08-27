@@ -6,7 +6,9 @@ class ArticleForm
   # @return [ArticleForm]
   def self.from_session(session)
     new(
-      category_scores: session['category_scores'],
+      # Uncompress category scores, changing the keys from indexes into names.
+      category_scores: session['category_scores']
+        .transform_keys { |index| OresCategories.all[Integer(index)] },
       article_type: session['article_type']&.to_sym || :any,
     )
   end
@@ -18,8 +20,8 @@ class ArticleForm
     new(
       # Nest submitted category scores under a single key.
       category_scores: params
-        .filter { |k, v| k.start_with?('category_score_') }
-        .transform_keys { |k| k.delete_prefix('category_score_') }
+        .filter { |k, v| k.start_with?("category_score_") }
+        .transform_keys { |k| k.delete_prefix("category_score_") }
         .transform_values(&:to_i)
         .sort_by { |_category, score| -score } # descending order
         .to_h,
@@ -54,7 +56,9 @@ class ArticleForm
     session['article_type'] = @article_type
 
     add_reaction_into_category_scores(article_categories)
+    # Compress category scores, changing the keys from names into indexes.
     session['category_scores'] = @category_scores
+      .transform_keys { |name| OresCategories.all.index(name) }
   end
 
   private
@@ -62,7 +66,7 @@ class ArticleForm
   # For each of the article's categories, applies +1 or -1 (like/dislike) to the
   # category score.
   def add_reaction_into_category_scores(article_categories)
-    step = { 'like' => 1, 'dislike' => -1}[@reaction]
+    step = { "like" => 1, "dislike" => -1}[@reaction]
     return unless step
 
     (article_categories || []).each do |article_category|
