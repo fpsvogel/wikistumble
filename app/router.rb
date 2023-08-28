@@ -30,8 +30,8 @@ class Router < Roda
     r.root do
       # RM these temporary defaults after reactive (Turbo Streams) category scores are implemented
       unless session['category_scores']
-        session['category_scores'] = OresCategories::DEFAULT
-        .map { |category| [OresCategories.all.index(category), 10] }
+        session['category_scores'] = Categories::DEFAULT
+        .map { |category| [Categories.all.index(category), 10] }
         .to_h
       end
 

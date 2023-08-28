@@ -1,5 +1,7 @@
-# Categories of Wikipedia articles according to ORES (https://ores.wikimedia.org).
-class OresCategories
+# Categories of Wikipedia articles according to LiftWing
+# (https://wikitech.wikimedia.org/wiki/Machine_Learning/LiftWing)
+# formerly ORES (https://ores.wikimedia.org).
+class Categories
   DEFAULT = [
     "Culture.Biography.Biography*",
     "Culture.Biography.Women",

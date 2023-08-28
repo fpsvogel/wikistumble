@@ -8,7 +8,7 @@ class ArticleForm
     new(
       # Uncompress category scores, changing the keys from indexes into names.
       category_scores: session['category_scores']
-        .transform_keys { |index| OresCategories.all[Integer(index)] },
+        .transform_keys { |index| Categories.all[Integer(index)] },
       article_type: session['article_type']&.to_sym || :any,
     )
   end
@@ -59,7 +59,7 @@ class ArticleForm
     add_reaction_into_category_scores(article_categories)
     # Compress category scores, changing the keys from names into indexes.
     session['category_scores'] = @category_scores
-      .transform_keys { |name| OresCategories.all.index(name) }
+      .transform_keys { |name| Categories.all.index(name) }
   end
 
   private

@@ -8,7 +8,8 @@ require "json"
 #       for article summaries.
 #   - Random page in category (https://randomincategory.toolforge.org)
 #       for random good or featured articles.
-#   - ORES (https://ores.wikimedia.org)
+#   - LiftWing (https://wikitech.wikimedia.org/wiki/Machine_Learning/LiftWing)
+#     formerly ORES (https://ores.wikimedia.org)
 #       for article categories.
 class Wikipedia
   MAX_ARTICLE_QUERIES = 10
@@ -30,7 +31,7 @@ class Wikipedia
 
     (1..MAX_ARTICLE_QUERIES).each do |query_n|
       article = random_article(type: @article_type)
-      category_predictions, category_probabilities = categories(article['revision'])
+      category_predictions, category_probabilities = categories(Integer(article['revision']))
       score = candidate_score(category_predictions, category_probabilities, @category_scores)
 
       candidates << [article, category_predictions, score]
@@ -59,7 +60,7 @@ class Wikipedia
   # @param type [String, Symbol] good or featured.
   # @return [Hash] the article summary.
   def random_better_article(type)
-    redirect_url = URI("https://randomincategory.toolforge.org/#{type.to_s.capitalize}_article")
+    redirect_url = URI("https://randomincategory.toolforge.org/#{type.to_s.capitalize}_articles")
     redirect = Net::HTTP.get_response(redirect_url)
     article_url = redirect['location']
     title = article_url.split("/").last
@@ -71,14 +72,20 @@ class Wikipedia
   # Fetches the predicted categories of an article, as well as the probabilities
   # of all categories. (The predicted categories are the ones with the highest
   # probabilities.)
-  # @param revision_id [String] an article's revision ID.
+  # @param revision_id [Integer] an article's revision ID.
   # @return [Array(Array<String>, Hash{String => Float})] the category predictions and probabilities.
   def categories(revision_id)
-    # list of topics: https://www.mediawiki.org/wiki/ORES/Articletopic
-    categories_url =
-      "https://ores.wikimedia.org/v3/scores/enwiki/?models=articletopic&revids=#{revision_id}"
+    categories_url = "https://api.wikimedia.org/service/lw/inference/v1/models/enwiki-articletopic:predict"
 
-    response = JSON.parse(URI.open(categories_url).read)
+    uri = URI(categories_url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Post.new(uri)
+    request['Content-Type'] = 'application/json'
+    request.body = { rev_id: revision_id }.to_json
+
+    response = JSON.parse(http.request(request).body)
 
     ["prediction", "probability"].map { |key|
       response.dig("enwiki", "scores").values.first.dig("articletopic", "score", key)
