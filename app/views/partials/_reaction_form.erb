@@ -1,28 +1,28 @@
 <% form @next, { method: :post, action: next_path }, wrapper: :div do |f| %>
-  <%# Reaction %>
-  <fieldset class="form-group margin-top">
-    <legend>Did you like this article?</legend>
+  <fieldset class="form-group margin-bottom-large reaction">
+    <legend>Do you like this article?</legend>
 
-    <label class="paper-radio margin-right-large" style="display:inline-block" for="reaction_like">
-      <input
-        type="radio"
-        value="like"
-        name="reaction"
-        id="reaction_like"
-      >
-      <span>👍</span>
-    </label>
+    <input
+      type="submit"
+      name="reaction"
+      value="-"
+      class="paper-btn margin-right-small"
+      style="background-color: var(--danger-light); font-weight: bold;"
+    >
 
-    <label class="paper-radio" style="display:inline-block" for="reaction_dislike">
-      <input
-        type="radio"
-        value="dislike"
-        name="reaction"
-        id="reaction_dislike">
-      <span>👎</span>
-    </label>
+    <input
+      type="submit"
+      name="reaction"
+      value="↻"
+      class="paper-btn margin-right-small"
+    >
+
+    <input
+      type="submit"
+      name="reaction"
+      value="+"
+      class="paper-btn"
+      style="background-color: var(--success-light); font-weight: bold;"
+    >
   </fieldset>
-
-  <%# Next article (submit) %>
-  <input type="submit" name="commit" value="Next article" class="paper-btn margin-bottom-large">
 <% end %>

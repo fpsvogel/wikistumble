@@ -6,6 +6,12 @@ legend {
   font-weight: bold;
 }
 
+fieldset.reaction {
+  input {
+    min-width: 2.7rem;
+  }
+}
+
 /* Keep the footer at the bottom of the page. */
 
 html, body {

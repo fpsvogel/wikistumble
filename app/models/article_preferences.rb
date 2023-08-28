@@ -60,7 +60,7 @@ class ArticlePreferences
   # For each of the article's categories, applies +1 or -1 (like/dislike) to the
   # category score.
   def add_reaction_into_category_scores(session)
-    step = { "like" => 1, "dislike" => -1}[@reaction]
+    step = { "+" => 1, "-" => -1}[@reaction]
     return unless step
 
     session['article_categories'].each do |article_category|
