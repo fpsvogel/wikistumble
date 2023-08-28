@@ -67,6 +67,8 @@ class Wikipedia
     summary_url = "https://en.wikipedia.org/api/rest_v1/page/summary/#{title}"
 
     JSON.parse(URI.open(summary_url).read)
+  rescue URI::InvalidURIError
+    JSON.parse(URI.open(URI::DEFAULT_PARSER.escape(summary_url)).read)
   end
 
   # Fetches the predicted categories of an article, as well as the probabilities
