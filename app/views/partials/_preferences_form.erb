@@ -1,9 +1,9 @@
 <% form @next, { method: :post, action: preferences_path }, wrapper: :div do |f| %>
   <%# Save (submit) %>
-  <input type="submit" name="commit" value="Save preferences" class="paper-btn margin-top-large margin-bottom">
+  <input type="submit" name="commit" value="Save preferences" class="paper-btn margin-top-large">
 
   <%# Article type %>
-  <fieldset class="form-group margin-top">
+  <fieldset class="form-group margin-top-large">
     <legend>Article type:</legend>
 
     <label class="paper-radio margin-right" style="display:inline-block" for="article_type_any">
@@ -41,7 +41,7 @@
   </fieldset>
 
   <%# Category scores %>
-  <fieldset class="form-group margin-top">
+  <fieldset class="form-group margin-top-large">
     <legend>Your category preferences:</legend>
     <table>
       <tbody>

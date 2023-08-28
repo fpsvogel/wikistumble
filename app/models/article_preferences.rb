@@ -47,6 +47,7 @@ class ArticlePreferences
         .filter { |k, v| k.start_with?("category_score_") }
         .transform_keys { |k| k.delete_prefix("category_score_") }
         .transform_values(&:to_i)
+        .reject { |_category, score| score.zero? }
         .sort_by { |_category, score| -score } # descending order
         .to_h
     else
