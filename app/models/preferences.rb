@@ -55,9 +55,17 @@ class Preferences
         .transform_keys { |index| Categories.all[Integer(index)] }
     end
 
+    category_scores.transform_values!(&:to_i)
+
+    # Sort by descending score order (except zeroes appear last), then alphabetical.
     category_scores
-      .transform_values(&:to_i)
-      .sort_by { |category, score| [-score, category] } # descending score order, then alphabetical
+      .reject { |_category, score| score.zero? }
+      .sort_by { |category, score| [-score, category] }
+      .concat(
+        category_scores
+          .filter { |_category, score| score.zero? }
+          .sort_by { |category, _score| category }
+      )
       .to_h
   end
 
