@@ -54,6 +54,14 @@ class Wikipedia
     else # good or featured
       random_better_article(type)
     end
+
+    raise OpenURI::HTTPError.new('404', STDOUT)
+  rescue OpenURI::HTTPError => e
+    if Config.development?
+      debugger
+    else
+      raise e
+    end
   end
 
   # Fetches the summary of a random good or featured article.

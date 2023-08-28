@@ -29,10 +29,14 @@ class Router < Roda
 
     r.root do
       preferences = Preferences.new(session:)
+
       article_contents = session['article'] ||
         Article.fetch_and_save!(preferences:, session:).contents
 
-      view "home", locals: { **preferences.attributes, article_contents: }
+      flash = "Try again! The article couldn't be fetched." if session['fetch_error']
+      session.delete('fetch_error')
+
+      view "home", locals: { article_contents:, **preferences.attributes, flash: }
     end
 
     r.on "next" do
@@ -40,7 +44,11 @@ class Router < Roda
         preferences = Preferences.new(params: r.params)
         preferences.save!(session)
 
-        article = Article.fetch_and_save!(preferences:, session:)
+        begin
+          article = Article.fetch_and_save!(preferences:, session:)
+        rescue OpenURI::HTTPError
+          session['fetch_error'] = true
+        end
 
         r.redirect root_path
       end
