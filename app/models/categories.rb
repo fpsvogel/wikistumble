@@ -5,7 +5,7 @@ class Categories
   # All categories, from https://www.mediawiki.org/wiki/ORES/Articletopic
   # @return [Array(String)]
   def self.all
-    [
+    @all ||= [
       "Culture.Biography.Biography*",
       "Culture.Biography.Women",
       "Culture.Food and drink",

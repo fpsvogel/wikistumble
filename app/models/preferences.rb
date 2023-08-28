@@ -6,6 +6,8 @@ class Preferences
   # @param params [Hash]
   def initialize(session: {}, params: {})
     @category_scores = retrieve_category_scores(session, params)
+    sort_category_scores!
+
     @article_type = params['article_type'] || session['article_type']&.to_sym || :any
     @reaction = params['reaction']
   end
@@ -27,7 +29,9 @@ class Preferences
   def save!(session)
     session['article_type'] = @article_type
 
-    add_reaction_into_category_scores(session)
+    add_reaction_into_category_scores!(session)
+    sort_category_scores!
+
     # Compress category scores, changing the keys from names into indexes.
     session['category_scores'] = @category_scores
       .transform_keys { |name| Categories.all.index(name) }
@@ -56,22 +60,11 @@ class Preferences
     end
 
     category_scores.transform_values!(&:to_i)
-
-    # Sort by descending score order (except zeroes appear last), then alphabetical.
-    category_scores
-      .reject { |_category, score| score.zero? }
-      .sort_by { |category, score| [-score, category] }
-      .concat(
-        category_scores
-          .filter { |_category, score| score.zero? }
-          .sort_by { |category, _score| category }
-      )
-      .to_h
   end
 
   # For each of the article's categories, applies +1 or -1 (like/dislike) to the
   # category score.
-  def add_reaction_into_category_scores(session)
+  def add_reaction_into_category_scores!(session)
     step = { "+" => 1, "-" => -1}[@reaction]
     return unless step
 
@@ -81,5 +74,19 @@ class Preferences
 
       @category_scores[article_category] = new_category_score
     end
+  end
+
+  # Sorts by descending score order (except zeroes appear last), then alphabetical.
+  # @return [Hash]
+  def sort_category_scores!
+    @category_scores = @category_scores
+      .reject { |_category, score| score.zero? }
+      .sort_by { |category, score| [-score, category] }
+      .concat(
+        @category_scores
+          .filter { |_category, score| score.zero? }
+          .sort_by { |category, _score| category }
+      )
+      .to_h
   end
 end

@@ -1,63 +1,65 @@
-<% form id: "next", method: :post, action: next_path do |f| %>
-  <%# There's no submit button here. The reaction buttons (outside this form) are the submit buttons. %>
+<div id="preferences">
+  <% form id: "next", method: :post, action: next_path do |f| %>
+    <%# There's no submit button here. The reaction buttons (outside this form) are the submit buttons. %>
 
-  <%# Article type %>
-  <fieldset class="form-group margin-top-large">
-    <legend>Article type:</legend>
+    <%# Article type %>
+    <fieldset class="form-group margin-top-large">
+      <legend>Article type:</legend>
 
-    <label class="paper-radio margin-right" style="display:inline-block" for="article_type_any">
-      <input
-        type="radio"
-        value="any"
-        <%= 'checked="checked"' if article_type == :any %>
-        name="article_type"
-        id="article_type_any"
-      >
-      <span>Any (fast)</span>
-    </label>
+      <label class="paper-radio margin-right" style="display:inline-block" for="article_type_any">
+        <input
+          type="radio"
+          value="any"
+          <%= 'checked="checked"' if article_type&.to_sym == :any %>
+          name="article_type"
+          id="article_type_any"
+        >
+        <span>Any (fast)</span>
+      </label>
 
-    <label class="paper-radio margin-right" style="display:inline-block" for="article_type_good">
-      <input
-        type="radio"
-        value="good"
-        <%= 'checked="checked"' if article_type == :good %>
-        name="article_type"
-        id="article_type_good"
-      >
-      <span>Good</span>
-    </label>
+      <label class="paper-radio margin-right" style="display:inline-block" for="article_type_good">
+        <input
+          type="radio"
+          value="good"
+          <%= 'checked="checked"' if article_type&.to_sym == :good %>
+          name="article_type"
+          id="article_type_good"
+        >
+        <span>Good</span>
+      </label>
 
-    <label class="paper-radio" style="display:inline-block" for="article_type_featured">
-      <input
-        type="radio"
-        value="featured"
-        <%= 'checked="checked"' if article_type == :featured %>
-        name="article_type"
-        id="article_type_featured"
-      >
-      <span>Featured</span>
-    </label>
-  </fieldset>
+      <label class="paper-radio" style="display:inline-block" for="article_type_featured">
+        <input
+          type="radio"
+          value="featured"
+          <%= 'checked="checked"' if article_type&.to_sym == :featured %>
+          name="article_type"
+          id="article_type_featured"
+        >
+        <span>Featured</span>
+      </label>
+    </fieldset>
 
-  <%# Category scores %>
-  <fieldset class="form-group margin-top-large">
-    <legend>Your category preferences:</legend>
-    <table>
-      <tbody>
-      <% category_scores.each do |category, score| %>
-          <tr>
-            <td><%= category.gsub(".", ".\u200B") %></td>
-            <td>
-              <input
-                value="<%= score %>"
-                type="number",
-                name="category_score_<%= category %>"
-                id="category_score_<%= category %>"
-              >
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </fieldset>
-<% end %>
+    <%# Category scores %>
+    <fieldset class="form-group margin-top-large">
+      <legend>Your category preferences:</legend>
+      <table>
+        <tbody>
+        <% category_scores.each do |category, score| %>
+            <tr>
+              <td><%= category.gsub(".", ".\u200B") %></td>
+              <td>
+                <input
+                  value="<%= score %>"
+                  type="number",
+                  name="category_score_<%= category %>"
+                  id="category_score_<%= category %>"
+                >
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </fieldset>
+  <% end %>
+</div>

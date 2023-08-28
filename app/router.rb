@@ -28,12 +28,12 @@ class Router < Roda
     check_csrf!
 
     r.root do
+      session['article'] ||= Article.default_contents
+      session['article_categories'] ||= Article.default_categories
+
       preferences = Preferences.new(session:)
 
-      article_contents = session['article'] ||
-        Article.fetch_and_save!(preferences:, session:).contents
-
-      view "home", locals: { article_contents:, **preferences.attributes }
+      view "home", locals: { article_contents: session['article'], **preferences.attributes }
     end
 
     r.on "next" do
@@ -48,7 +48,7 @@ class Router < Roda
 
           r.redirect root_path
         else
-          render "next_article_stream", locals: { article: }
+          render "next_article_stream", locals: { article:, **preferences.attributes }
         end
       end
     end
