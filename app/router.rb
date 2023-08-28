@@ -36,14 +36,17 @@ class Router < Roda
       end
 
       form = ArticleForm.from_session(session)
+      article_contents = session['article'] ||
+        Article.fetch_and_save!(session, form).contents
 
-      view "home", locals: form.attributes_to_render
+      view "home", locals: { **form.attributes, article_contents: }
     end
 
     r.on "next" do
       r.post true do
         form = ArticleForm.from_submit(r.params)
-        form.save(session)
+        article = Article.fetch_and_save!(session, form)
+        form.save!(session, article.categories)
 
         r.redirect root_path
       end

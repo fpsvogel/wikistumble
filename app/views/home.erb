@@ -4,10 +4,4 @@
 
 <%= partial "partials/article_form", locals: { article_type:, category_scores: } %>
 
-<%= partial "partials/article", locals: {
-  title: "Arnfinn Laudal",
-  description: "Norwegian mathematician",
-  url: "https://en.wikipedia.org/wiki/Arnfinn_Laudal",
-  excerpt: "Olav Arnfinn Laudal is a Norwegian mathematician.",
-  thumbnail_source: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Arnfinn_Laudal.jpg/320px-Arnfinn_Laudal.jpg",
-} %>
+<%= partial "partials/article", locals: article_contents %>

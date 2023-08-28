@@ -39,9 +39,10 @@ class ArticleForm
     @reaction = reaction
   end
 
-  # Attributes to render in the form.
+  # @reaction is omitted because it's ancillary, temporarily stored only in
+  # order to influence @category_scores.
   # @return [Hash]
-  def attributes_to_render
+  def attributes
     {
       category_scores: @category_scores,
       article_type: @article_type,
@@ -52,7 +53,7 @@ class ArticleForm
   # that are rendered in the form.
   # @param session [Hash]
   # @param article_categories [Hash]
-  def save(session, article_categories = nil)
+  def save!(session, article_categories)
     session['article_type'] = @article_type
 
     add_reaction_into_category_scores(article_categories)
@@ -65,6 +66,7 @@ class ArticleForm
 
   # For each of the article's categories, applies +1 or -1 (like/dislike) to the
   # category score.
+  # @param article_categories [Array<String>]
   def add_reaction_into_category_scores(article_categories)
     step = { "like" => 1, "dislike" => -1}[@reaction]
     return unless step

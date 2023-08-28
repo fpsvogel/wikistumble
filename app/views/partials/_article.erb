@@ -2,9 +2,16 @@
   <h2 style="margin:0 0 1rem 0"><%= title %></h2>
   <p><em><%= description %></em></p>
   <p><%= link_to url, url, target: "_blank" %></p>
-  <p><%= excerpt %></p>
+  <p><%= extract %></p>
 
   <% unless thumbnail_source.nil? %>
     <img src="<%= thumbnail_source %>">
   <% end %>
+
+  <h3>Related:</h3>
+  <ul>
+    <% related_articles.each do |related_title, related_url| %>
+      <li><%= link_to related_title, related_url, target: "_blank" %></li>
+    <% end %>
+  </ul>
 </div>

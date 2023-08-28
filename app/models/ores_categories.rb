@@ -1,3 +1,4 @@
+# Categories of Wikipedia articles according to ORES (https://ores.wikimedia.org).
 class OresCategories
   DEFAULT = [
     "Culture.Biography.Biography*",
@@ -6,6 +7,8 @@ class OresCategories
     "History and Society.History",
   ]
 
+  # All categories, from https://www.mediawiki.org/wiki/ORES/Articletopic
+  # @return [Array(String)]
   def self.all
     @all ||=
       ["Culture.Biography.Biography*",
