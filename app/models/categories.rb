@@ -2,18 +2,11 @@
 # (https://wikitech.wikimedia.org/wiki/Machine_Learning/LiftWing)
 # formerly ORES (https://ores.wikimedia.org).
 class Categories
-  DEFAULT = [
-    "Culture.Biography.Biography*",
-    "Culture.Biography.Women",
-    "Culture.Visual arts.Visual arts*",
-    "History and Society.History",
-  ]
-
   # All categories, from https://www.mediawiki.org/wiki/ORES/Articletopic
   # @return [Array(String)]
   def self.all
-    @all ||=
-      ["Culture.Biography.Biography*",
+    [
+      "Culture.Biography.Biography*",
       "Culture.Biography.Women",
       "Culture.Food and drink",
       "Culture.Internet culture",
@@ -76,6 +69,7 @@ class Categories
       "STEM.Physics",
       "STEM.STEM*",
       "STEM.Space",
-      "STEM.Technology"]
+      "STEM.Technology",
+    ]
   end
 end

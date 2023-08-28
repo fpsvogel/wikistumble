@@ -29,13 +29,6 @@ class Router < Roda
     check_csrf!
 
     r.root do
-      # RM these temporary defaults after reactive (Turbo Streams) category scores are implemented
-      unless session['category_scores']
-        session['category_scores'] = Categories::DEFAULT
-        .map { |category| [Categories.all.index(category), 10] }
-        .to_h
-      end
-
       preferences = ArticlePreferences.new(session:)
       article_contents = session['article'] ||
         Article.fetch_and_save!(preferences:, session:).contents

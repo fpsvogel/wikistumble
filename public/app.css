@@ -6,9 +6,29 @@ legend {
   font-weight: bold;
 }
 
+/* Make reaction buttons uniform in size. */
 fieldset.reaction {
   input {
     min-width: 2.7rem;
+  }
+}
+
+/* Make the category preferences table more compact. */
+table {
+  td {
+    padding-bottom: 0rem !important;
+
+    &:first-child {
+      padding-top: 0.3rem !important;
+    }
+    &:last-child {
+      padding-top: 0.2rem !important;
+    }
+  }
+
+  input {
+    max-height: 1.5rem;
+    padding-top: 0.7rem;
   }
 }
 

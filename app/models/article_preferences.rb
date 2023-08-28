@@ -43,18 +43,22 @@ class ArticlePreferences
   def retrieve_category_scores(session, params)
     if params.keys.any? { |key| key.start_with?('category_score') }
       # Nest submitted category scores under a single key.
-      params
+      category_scores = params
         .filter { |k, v| k.start_with?("category_score_") }
         .transform_keys { |k| k.delete_prefix("category_score_") }
-        .transform_values(&:to_i)
-        .reject { |_category, score| score.zero? }
-        .sort_by { |_category, score| -score } # descending order
-        .to_h
     else
+      # Initialize category scores to zero.
+      session['category_scores'] ||= (0..Categories.all.count - 1).map { |i| [i, 0] }.to_h
+
       # Uncompress category scores, changing the keys from indexes into names.
-      session['category_scores']
+      category_scores = session['category_scores']
         .transform_keys { |index| Categories.all[Integer(index)] }
     end
+
+    category_scores
+      .transform_values(&:to_i)
+      .sort_by { |category, score| [-score, category] } # descending score order, then alphabetical
+      .to_h
   end
 
   # For each of the article's categories, applies +1 or -1 (like/dislike) to the
