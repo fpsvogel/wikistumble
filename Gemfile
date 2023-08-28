@@ -4,13 +4,6 @@ gem "roda", "~> 3.71"
 gem "puma", "~> 6.3"
 gem "rackup", "~> 2.1"
 
-gem "sequel", "~> 5.71"
-gem "pg", "~> 1.5"
-# TODO gem "sequel_tools", "~> 0.1.14"
-# TODO https://github.com/jeremyevans/sequel-annotate
-# TODO https://github.com/jeremyevans/sequel_postgresql_triggers
-# TODO compare https://github.com/jeremyevans/roda-sequel-stack and https://gitlab.com/nini1294/roda-template-simple
-
 gem "tilt", "~> 2.2"
 gem "erubi", "~> 1.12"
 gem "forme", "~> 2.4"

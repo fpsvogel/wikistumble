@@ -2,8 +2,6 @@ require_relative "config"
 require "bundler"
 Bundler.require(:default, Config.env)
 
-require_relative "sequel.rb"
-
 # If race conditions arise, add the further code in
 # https://github.com/janko/budget/blob/main/config/loader.rb
 # and add this to config.ru:
