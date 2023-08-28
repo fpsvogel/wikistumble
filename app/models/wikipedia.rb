@@ -55,7 +55,6 @@ class Wikipedia
       random_better_article(type)
     end
 
-    raise OpenURI::HTTPError.new('404', STDOUT)
   rescue OpenURI::HTTPError => e
     if Config.development?
       debugger

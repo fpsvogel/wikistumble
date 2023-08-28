@@ -1,3 +1,5 @@
+require "open-uri"
+
 class Router < Roda
   opts[:root] = Config.root
 
@@ -33,10 +35,7 @@ class Router < Roda
       article_contents = session['article'] ||
         Article.fetch_and_save!(preferences:, session:).contents
 
-      flash = "Try again! The article couldn't be fetched." if session['fetch_error']
-      session.delete('fetch_error')
-
-      view "home", locals: { article_contents:, **preferences.attributes, flash: }
+      view "home", locals: { article_contents:, **preferences.attributes }
     end
 
     r.on "next" do
@@ -47,10 +46,12 @@ class Router < Roda
         begin
           article = Article.fetch_and_save!(preferences:, session:)
         rescue OpenURI::HTTPError
-          session['fetch_error'] = true
-        end
+          flash['error'] = "Try again! There was a problem fetching the article."
 
-        r.redirect root_path
+          r.redirect root_path
+        else
+          render "next_article_stream", locals: { article: }
+        end
       end
     end
   end
