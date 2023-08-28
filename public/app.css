@@ -2,6 +2,10 @@ html.dark body {
   background: #41403e;
 }
 
+h1 {
+  margin-top: -1rem;
+}
+
 legend {
   font-weight: bold;
 }
@@ -16,13 +20,20 @@ fieldset.reaction {
 /* Make the category preferences table more compact. */
 table {
   td {
+    max-width: 40vw;
     padding-bottom: 0rem !important;
 
     &:first-child {
       padding-top: 0.3rem !important;
     }
+
     &:last-child {
+      max-width: 20vw;
       padding-top: 0.2rem !important;
+
+      input {
+        max-width: 23vw;
+      }
     }
   }
 
@@ -45,4 +56,36 @@ body {
 
 #footer {
   margin-top: auto;
+}
+
+/* Reduce horizontal spacing on small screens. */
+@media only screen and (min-width: 481px) {
+  td:first-child {
+    max-width: 10rem;
+  }
+  td:last-child input {
+    max-width: 5rem !important;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  body > .paper.container {
+    margin-top: 0;
+  }
+
+  .container {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 0.5rem;
+    font-size: 48pt;
+  }
+  h2 {
+    font-size: 36pt;
+  }
+
+  td:first-child {
+    padding-left: 0;
+  }
 }

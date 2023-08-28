@@ -47,7 +47,7 @@
       <tbody>
       <% category_scores.each do |category, score| %>
           <tr>
-            <td><%= category %></td>
+            <td><%= category.gsub(".", ".\u200B") %></td>
             <td>
               <input
                 value="<%= score %>"
