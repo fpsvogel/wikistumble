@@ -1,6 +1,6 @@
 # Article preferences, input via forms.
-class ArticlePreferences
-  # Initializes ArticlePreferences with values submitted in a form to params,
+class Preferences
+  # Initializes Preferences with values submitted in a form to params,
   # filling in any missing values from the session.
   # @param session [Hash]
   # @param params [Hash]

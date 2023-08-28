@@ -29,7 +29,7 @@ class Router < Roda
     check_csrf!
 
     r.root do
-      preferences = ArticlePreferences.new(session:)
+      preferences = Preferences.new(session:)
       article_contents = session['article'] ||
         Article.fetch_and_save!(preferences:, session:).contents
 
@@ -38,7 +38,7 @@ class Router < Roda
 
     r.on "next" do
       r.post true do
-        preferences = ArticlePreferences.new(session:, params: r.params)
+        preferences = Preferences.new(session:, params: r.params)
         preferences.save!(session)
 
         article = Article.fetch_and_save!(preferences:, session:)
@@ -49,7 +49,7 @@ class Router < Roda
 
     r.on "preferences" do
       r.post true do
-        preferences = ArticlePreferences.new(session:, params: r.params)
+        preferences = Preferences.new(session:, params: r.params)
         preferences.save!(session)
 
         r.redirect root_path

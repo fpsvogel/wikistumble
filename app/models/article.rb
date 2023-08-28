@@ -3,7 +3,7 @@ class Article
   attr_reader :categories
 
   # Fetches a new Wikipedia article and saves it and its categories to the session.
-  # @param preferences [ArticlePreferences]
+  # @param preferences [Preferences]
   # @param session [Hash]
   # @return [Article] the new Article.
   def self.fetch_and_save!(preferences:, session:)
