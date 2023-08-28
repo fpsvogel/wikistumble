@@ -26,7 +26,6 @@ class Article
     @extract = summary["extract"]
     @url = summary.dig("content_urls", "desktop", "page")
     @thumbnail_source = summary.dig("thumbnail", "source")
-    @related_articles = api.related_articles(summary)
   end
 
   # Everything except @categories.
@@ -38,7 +37,6 @@ class Article
       url: @url,
       extract: @extract,
       thumbnail_source: @thumbnail_source,
-      related_articles: @related_articles,
     }
   end
 end

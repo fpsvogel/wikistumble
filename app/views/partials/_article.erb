@@ -7,11 +7,4 @@
   <% unless thumbnail_source.nil? %>
     <img src="<%= thumbnail_source %>">
   <% end %>
-
-  <h3>Related:</h3>
-  <ul>
-    <% related_articles.each do |related_title, related_url| %>
-      <li><%= link_to related_title, related_url, target: "_blank" %></li>
-    <% end %>
-  </ul>
 </div>

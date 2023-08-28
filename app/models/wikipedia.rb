@@ -41,20 +41,6 @@ class Wikipedia
     candidates.max_by(&:last)[0..1]
   end
 
-  # Fetches the titles and URLs of related articles.
-  # @param summary [Hash] the summary of an article.
-  # @return [Hash{String => String}]
-  def related_articles(summary)
-    response = JSON.parse(URI.open("https://en.wikipedia.org/api/rest_v1/page/related/#{uri_escape(summary['title'])}").read)
-
-    response['pages']
-      .map { |hash| [hash['title'], hash['content_urls']['desktop']['page']] }
-      .to_h
-  rescue OpenURI::HTTPError
-    STDERR.puts "Unable to get related articles for \"#{summary['title']}\" #{summary['url']}"
-    nil
-  end
-
   private
 
   # Fetches the summary of a random article.
