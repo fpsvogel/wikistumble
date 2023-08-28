@@ -64,7 +64,7 @@ class Wikipedia
     redirect = Net::HTTP.get_response(redirect_url)
     article_url = redirect['location']
     title = article_url.split("/").last
-    summary_url = "https://en.wikipedia.org/api/rest_v1/page/summary/#{uri_escape(title)}"
+    summary_url = "https://en.wikipedia.org/api/rest_v1/page/summary/#{title}"
 
     JSON.parse(URI.open(summary_url).read)
   end
@@ -115,11 +115,5 @@ class Wikipedia
     top_category_score = category_scores.values.max
     probability = CANDIDATE_CHANCE * (candidate_score / top_category_score)
     probability > 1 || rand < probability
-  end
-
-  # Escapes a string for use in a URI.
-  # @param str [String]
-  def uri_escape(str)
-    URI::DEFAULT_PARSER.escape(str)
   end
 end

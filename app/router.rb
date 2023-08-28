@@ -20,6 +20,7 @@ class Router < Roda
 
   path(:root, "/")
   path(:next, "/next")
+  path(:preferences, "/preferences")
 
   route do |r|
     r.assets
@@ -35,18 +36,28 @@ class Router < Roda
         .to_h
       end
 
-      form = ArticleForm.from_session(session)
+      preferences = ArticlePreferences.new(session:)
       article_contents = session['article'] ||
-        Article.fetch_and_save!(session, form).contents
+        Article.fetch_and_save!(preferences:, session:).contents
 
-      view "home", locals: { **form.attributes, article_contents: }
+      view "home", locals: { **preferences.attributes, article_contents: }
     end
 
     r.on "next" do
       r.post true do
-        form = ArticleForm.from_submit(r.params)
-        article = Article.fetch_and_save!(session, form)
-        form.save!(session, article.categories)
+        preferences = ArticlePreferences.new(session:, params: r.params)
+        preferences.save!(session)
+
+        article = Article.fetch_and_save!(preferences:, session:)
+
+        r.redirect root_path
+      end
+    end
+
+    r.on "preferences" do
+      r.post true do
+        preferences = ArticlePreferences.new(session:, params: r.params)
+        preferences.save!(session)
 
         r.redirect root_path
       end

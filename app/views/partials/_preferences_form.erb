@@ -1,0 +1,64 @@
+<% form @next, { method: :post, action: preferences_path }, wrapper: :div do |f| %>
+  <%# Save (submit) %>
+  <input type="submit" name="commit" value="Save preferences" class="paper-btn margin-top-large margin-bottom">
+
+  <%# Article type %>
+  <fieldset class="form-group margin-top">
+    <legend>Article type:</legend>
+
+    <label class="paper-radio margin-right" style="display:inline-block" for="article_type_any">
+      <input
+        type="radio"
+        value="any"
+        <%= 'checked="checked"' if article_type == :any %>
+        name="article_type"
+        id="article_type_any"
+      >
+      <span>Any (fast)</span>
+    </label>
+
+    <label class="paper-radio margin-right" style="display:inline-block" for="article_type_good">
+      <input
+        type="radio"
+        value="good"
+        <%= 'checked="checked"' if article_type == :good %>
+        name="article_type"
+        id="article_type_good"
+      >
+      <span>Good</span>
+    </label>
+
+    <label class="paper-radio" style="display:inline-block" for="article_type_featured">
+      <input
+        type="radio"
+        value="featured"
+        <%= 'checked="checked"' if article_type == :featured %>
+        name="article_type"
+        id="article_type_featured"
+      >
+      <span>Featured</span>
+    </label>
+  </fieldset>
+
+  <%# Category scores %>
+  <fieldset class="form-group margin-top">
+    <legend>Your category preferences:</legend>
+    <table>
+      <tbody>
+      <% category_scores.each do |category, score| %>
+          <tr>
+            <td><%= category %></td>
+            <td>
+              <input
+                value="<%= score %>"
+                type="number",
+                name="category_score_<%= category %>"
+                id="category_score_<%= category %>"
+              >
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </fieldset>
+<% end %>
