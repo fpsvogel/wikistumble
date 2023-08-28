@@ -1,10 +1,10 @@
 # Article preferences, input via forms.
 class Preferences
-  # Initializes Preferences with values submitted in a form to params,
-  # filling in any missing values from the session.
+  # Initializes Preferences with values submitted in a form to params (if given),
+  # filling in any missing values from the session (if given).
   # @param session [Hash]
   # @param params [Hash]
-  def initialize(session:, params: {})
+  def initialize(session: {}, params: {})
     @category_scores = retrieve_category_scores(session, params)
     @article_type = params['article_type'] || session['article_type']&.to_sym || :any
     @reaction = params['reaction']

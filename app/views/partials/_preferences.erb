@@ -1,6 +1,5 @@
-<% form @next, { method: :post, action: preferences_path }, wrapper: :div do |f| %>
-  <%# Save (submit) %>
-  <input type="submit" name="commit" value="Save preferences" class="paper-btn margin-top-large">
+<% form id: "next", method: :post, action: next_path do |f| %>
+  <%# There's no submit button here. The reaction buttons (outside this form) are the submit buttons. %>
 
   <%# Article type %>
   <fieldset class="form-group margin-top-large">

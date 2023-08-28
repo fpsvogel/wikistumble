@@ -2,9 +2,6 @@
 
 <h1>Wiki Stumble</h1>
 
-<%= partial "partials/reaction_form" %>
-
+<%= partial "partials/reaction_buttons" %>
 <%= partial "partials/article", locals: article_contents %>
-
-<%= partial "partials/preferences_form", locals: { article_type:, category_scores: } %>
-
+<%= partial "partials/preferences", locals: { article_type:, category_scores: } %>

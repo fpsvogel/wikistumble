@@ -20,7 +20,6 @@ class Router < Roda
 
   path(:root, "/")
   path(:next, "/next")
-  path(:preferences, "/preferences")
 
   route do |r|
     r.assets
@@ -38,19 +37,10 @@ class Router < Roda
 
     r.on "next" do
       r.post true do
-        preferences = Preferences.new(session:, params: r.params)
+        preferences = Preferences.new(params: r.params)
         preferences.save!(session)
 
         article = Article.fetch_and_save!(preferences:, session:)
-
-        r.redirect root_path
-      end
-    end
-
-    r.on "preferences" do
-      r.post true do
-        preferences = Preferences.new(session:, params: r.params)
-        preferences.save!(session)
 
         r.redirect root_path
       end
