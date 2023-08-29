@@ -4,19 +4,7 @@
 <div class="row flex-edges" style="margin-bottom:0;">
   <h1>Wiki Stumble</h1>
 
-  <% form method: :post, action: theme_path do |f| %>
-    <fieldset id="theme-switcher" class="form-group">
-      <label for="theme-input" class="paper-switch-tile">
-        <input id="theme-input" name="dark-theme" type="checkbox">
-        <div class="paper-switch-tile-card border">
-          <div class="paper-switch-tile-card-front border">Dark</div>
-          <div class="paper-switch-tile-card-back border background-primary" style="color:var(--muted-dark)">Light</div>
-        </div>
-      </label>
-    </fieldset>
-
-    <input id="submit-theme" type="submit" style="display:none">
-  <% end %>
+  <%= partial "partials/theme_switcher" %>
 </div>
 
 <%= partial "partials/flash" %>
