@@ -6,6 +6,14 @@ h1 {
   margin-top: -1rem;
 }
 
+#theme-switcher {
+  margin: 0 0 0 2rem;
+
+  .paper-switch-tile {
+    margin: 1.5rem -2rem 0 0;
+  }
+}
+
 h2 {
   margin:0 0 1rem 0;
 }

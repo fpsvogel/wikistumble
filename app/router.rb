@@ -20,6 +20,7 @@ class Router < Roda
 
   path(:root, "/")
   path(:next, "/next")
+  path(:theme, "/theme")
 
   route do |r|
     r.assets
@@ -39,6 +40,7 @@ class Router < Roda
         article_contents: session['article'],
         category_scores: preferences.category_scores,
         article_type: preferences.article_type,
+        theme: session['theme'],
       }
     end
 
@@ -70,6 +72,25 @@ class Router < Roda
             article_type: preferences.article_type,
           }
         end
+      end
+    end
+
+    r.on "theme" do
+      r.post true do
+        switched_to_dark_theme = r.params.has_key?('dark-theme')
+
+        session['theme'] = switched_to_dark_theme ? "dark" : nil
+
+        # Use a redirect status code but without a redirect, because Turbo
+        # expects a redirect. This feels hacky, but I like it better than the
+        # alternatives of (a) letting a 200 response through (then an error from
+        # Turbo appears in the browser console), or (b) using 422 Unprocessable
+        # Entity (then the browser console shows the 422 like an error).
+        # And adding "data-turbo" => false to the theme switcher form leads to
+        # invalid CSRF tokens, so that's not an option.
+        response.status = 303
+
+        "" # Empty response body, so that nothing is rendered.
       end
     end
   end
