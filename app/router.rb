@@ -28,27 +28,47 @@ class Router < Roda
     check_csrf!
 
     r.root do
+      # Initialize category scores to empty, and the article to a default.
+      session['category_scores'] ||= {}
       session['article'] ||= Article.default_contents
       session['article_categories'] ||= Article.default_categories
 
-      preferences = Preferences.new(session:)
+      preferences = Preferences.from_session(session)
 
-      view "home", locals: { article_contents: session['article'], **preferences.attributes }
+      view "home", locals: {
+        article_contents: session['article'],
+        category_scores: preferences.category_scores,
+        article_type: preferences.article_type,
+      }
     end
 
     r.on "next" do
       r.post true do
-        preferences = Preferences.new(params: r.params)
-        preferences.save!(session)
+        preferences = Preferences.from_params(
+          params: r.params,
+          article_categories: session['article_categories'],
+        )
+
+        # Save preferences to the session.
+        session['article_type'] = preferences.article_type
+        session['category_scores'] = preferences.compressed_category_scores
 
         begin
-          article = Article.fetch_and_save!(preferences:, session:)
+          article = Article.fetch(preferences:, session:)
         rescue OpenURI::HTTPError
           flash['error'] = "Try again! There was a problem fetching the article."
 
           r.redirect root_path
         else
-          render "next_article_stream", locals: { article:, **preferences.attributes }
+          # Save the article to the session.
+          session['article_categories'] = article.categories
+          session['article'] = article.contents
+
+          render "next_article_stream", locals: {
+            article_contents: article.contents,
+            category_scores: preferences.category_scores,
+            article_type: preferences.article_type,
+          }
         end
       end
     end

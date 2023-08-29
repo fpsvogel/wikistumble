@@ -2,17 +2,15 @@
 class Article
   attr_reader :categories
 
-  # Fetches a new Wikipedia article and saves it and its categories to the session.
+  # Fetches a new Wikipedia article and extracts its contents and categories
+  # into a new Article object.
   # @param preferences [Preferences]
-  # @param session [Hash]
   # @return [Article] the new Article.
-  def self.fetch_and_save!(preferences:, session:)
-    article = new(**preferences.attributes)
-
-    session['article_categories'] = article.categories
-    session['article'] = article.contents
-
-    article
+  def self.fetch(preferences:, session:)
+    new(
+      article_type: preferences.article_type,
+      category_scores: preferences.category_scores,
+    )
   end
 
   # The default article that appears when the app is first opened (or when
@@ -34,10 +32,10 @@ class Article
     ["STEM.STEM*", "STEM.Biology", "History and Society.History", "Culture.Literature"]
   end
 
-  # @param category_scores [Hash]
   # @param article_type [String, Symbol]
-  def initialize(category_scores:, article_type:)
-    api = Wikipedia.new(category_scores:, article_type:)
+  # @param category_scores [Hash]
+  def initialize(article_type:, category_scores:)
+    api = Wikipedia.new(article_type:, category_scores:)
     summary, @categories = api.fetch_summary_and_categories
 
     @title = summary["title"]

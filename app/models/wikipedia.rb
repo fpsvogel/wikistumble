@@ -17,11 +17,11 @@ class Wikipedia
   # to get a probability that a candidate will be selected early, before
   # MAX_ARTICLE_QUERIES is reached.
 
-  # @param category_scores [Hash]
   # @param article_type [String, Symbol]
-  def initialize(category_scores:, article_type:)
-    @category_scores = category_scores
+  # @param category_scores [Hash]
+  def initialize(article_type:, category_scores:)
     @article_type = article_type
+    @category_scores = category_scores
   end
 
   # Fetches an article summary and its categories.
