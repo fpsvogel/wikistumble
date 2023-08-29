@@ -7,10 +7,11 @@ h1 {
 }
 
 #theme-switcher {
-  margin: 0 0 0 2rem;
+  margin-bottom: 0;
+  margin-right: -2rem;
 
   .paper-switch-tile {
-    margin: 1.5rem -2rem 0 0;
+    margin-top: 1.5rem;
   }
 }
 
@@ -24,6 +25,12 @@ h2 {
 
 legend {
   font-weight: bold;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Make reaction buttons uniform in size. */
