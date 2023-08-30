@@ -3,20 +3,32 @@ html.dark body {
 }
 
 h1 {
+  font-size: 36pt;
   margin-top: -1rem;
+}
+
+h2 {
+  font-size: 42pt;
+  margin:0 0 1rem 0;
+  line-height: 1;
 }
 
 #theme-switcher {
   margin-bottom: 0;
-  margin-right: -2rem;
+  margin-right: -1.8rem;
+  margin-left: -0.5rem;
+  min-width: 0;
+  max-width: 50%;
 
-  .paper-switch-tile {
-    margin-top: 1.5rem;
+  & .paper-switch-tile {
+    margin-top: 0.5rem;
+    width: 60px;
+    height: 60px;
   }
-}
 
-h2 {
-  margin:0 0 1rem 0;
+  & .paper-switch-tile-card div {
+    line-height: 55px;
+  }
 }
 
 #flash {
@@ -34,34 +46,27 @@ legend {
 }
 
 /* Make reaction buttons uniform in size. */
-fieldset.reaction {
-  input {
+#reaction {
+  & input {
     min-width: 2.7rem;
   }
 }
 
 /* Make the category preferences table more compact. */
-table {
-  td {
-    max-width: 40vw;
-    padding-bottom: 0rem !important;
+td {
+  padding-bottom: 0rem !important;
 
-    &:first-child {
-      padding-top: 0.3rem !important;
-    }
-
-    &:last-child {
-      max-width: 20vw;
-      padding-top: 0.2rem !important;
-
-      input {
-        max-width: 23vw;
-      }
-    }
+  &:first-child {
+    padding-top: 0.3rem !important;
   }
 
-  input {
+  &:last-child {
+    padding-top: 0.2rem !important;
+  }
+
+  & input {
     max-height: 1.5rem;
+    max-width: 5rem;
     padding-top: 0.7rem;
   }
 }
@@ -81,16 +86,6 @@ body {
   margin-top: auto;
 }
 
-/* Reduce horizontal spacing on small screens. */
-@media only screen and (min-width: 481px) {
-  td:first-child {
-    max-width: 10rem;
-  }
-  td:last-child input {
-    max-width: 5rem !important;
-  }
-}
-
 @media only screen and (max-width: 992px) {
   body > .paper.container {
     margin-top: 0;
@@ -101,14 +96,51 @@ body {
   }
 
   h1 {
-    margin-top: 0.5rem;
-    font-size: 48pt;
+    margin-top: -0.5rem;
+    font-size: 32pt;
   }
+
   h2 {
     font-size: 36pt;
   }
+}
 
-  td:first-child {
-    padding-left: 0;
+@media only screen and (max-width: 600px) {
+  td {
+    &:last-child {
+      padding-right: 0;
+    }
+
+    & input {
+      max-width: 4rem;
+    }
+  }
+}
+
+/* Prevent a vertical shift. */
+@media only screen and (max-width: 520px) {
+  #reaction {
+    margin-bottom: 1rem;
+  }
+
+  td {
+    &:first-child {
+      padding-left: 0;
+    }
+
+    & input {
+      max-width: 3rem;
+    }
+  }
+}
+
+/* Reduce horizontal spacing on small screens. */
+@media only screen and (max-width: 480px) {
+  h1 {
+    margin-top: 0.3rem;
+  }
+
+  #theme-switcher {
+    margin-top: 0.7rem;
   }
 }
