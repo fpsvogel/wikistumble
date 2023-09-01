@@ -61,5 +61,15 @@
         </tbody>
       </table>
     </fieldset>
+
+    <%# Next articles (hidden) %>
+    <% next_articles.each.with_index do |article, i| %>
+      <input type="hidden" name="next_article_<%= i + 1 %>_title" value="<%= article['title'] %>" />
+      <input type="hidden" name="next_article_<%= i + 1 %>_description" value="<%= article['description'] %>" />
+      <input type="hidden" name="next_article_<%= i + 1 %>_url" value="<%= article['url'] %>" />
+      <input type="hidden" name="next_article_<%= i + 1 %>_extract" value="<%= article['extract'] %>" />
+      <input type="hidden" name="next_article_<%= i + 1 %>_thumbnail_source" value="<%= article['thumbnail_source'] %>" />
+      <input type="hidden" name="next_article_<%= i + 1 %>_categories" value="<%= article['categories'].to_json.gsub('"', '``') %>" />
+    <% end %>
   <% end %>
 </div>

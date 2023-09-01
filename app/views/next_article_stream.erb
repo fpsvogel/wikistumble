@@ -1,3 +1,3 @@
 <%= turbo_stream.replace "article", partial("partials/article", locals: article_contents) %>
-<%= turbo_stream.replace "preferences", partial("partials/preferences", locals: { article_type:, category_scores: }) %>
+<%= turbo_stream.replace "preferences", partial("partials/preferences", locals: { article_type:, category_scores:, next_articles: }) %>
 <%= turbo_stream.remove "flash" %>

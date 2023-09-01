@@ -29,17 +29,22 @@ class Router < Roda
     check_csrf!
 
     r.root do
-      # Initialize category scores to empty, and the article to a default.
-      session['category_scores'] ||= {}
-      session['article'] ||= Article.default_contents
-      session['article_categories'] ||= Article.default_categories
+      # Initialize category scores to empty, and the articles to defaults.
+      unless session['category_scores']
+        session['category_scores'] = {}
+        session['article'], *next_articles = Article.defaults
+      end
 
       preferences = Preferences.from_session(session)
 
+      # TODO if next_articles is nil (meaning the user refreshed the page),
+      # open a new thread and fetch and stream next articles.
+
       view "home", locals: {
-        article_contents: session['article'],
+        article_contents: session['article'].except('categories'),
         category_scores: preferences.category_scores,
         article_type: preferences.article_type,
+        next_articles: next_articles || [],
         theme: session['theme'],
       }
     end
@@ -48,29 +53,58 @@ class Router < Roda
       r.post true do
         preferences = Preferences.from_params(
           params: r.params,
-          article_categories: session['article_categories'],
+          article_categories: session['article']['categories'],
         )
 
         # Save preferences to the session.
         session['article_type'] = preferences.article_type
         session['category_scores'] = preferences.compressed_category_scores
 
-        begin
-          article = Article.fetch(preferences:, session:)
-        rescue OpenURI::HTTPError
+        # Extract next articles (article buffer) from params.
+        next_articles = r.params
+          .filter { |k, _v| k.start_with?('next_article_') }
+          .map { |k, v|
+            attribute = k[/(?<=\d_).+/] # e.g. "title" in "next_article_0_title"
+
+            [attribute, v]
+          }
+          .each_slice(6)
+          .map { |slice|
+            # Double quotes were replaced with two backticks in _preferences.erb
+            # in order for the array of strings to be stored in an HTML attribute.
+            categories = [slice.last[0], JSON.parse(slice.last[1].gsub('``', '"'))]
+
+            [*slice[..-2], categories]
+          }
+          .map(&:to_h)
+
+        # Fetch the next article if the article buffer in params is empty.
+        article = next_articles.shift
+        retries = 2
+
+        until article || retries < 0 do
+          begin
+            article = Article.fetch(preferences:, session:).to_h
+          rescue OpenURI::HTTPError
+            retries -= 1
+          end
+        end
+
+        # TODO open a new thread and fetch and stream next article(s) to fill the buffer.
+
+        if article
+          session['article'] = article
+
+          render "next_article_stream", locals: {
+            article_contents: session['article'].except('categories'),
+            category_scores: preferences.category_scores,
+            article_type: preferences.article_type,
+            next_articles: next_articles,
+          }
+        else
           flash['error'] = "Try again! There was a problem fetching the article."
 
           r.redirect root_path
-        else
-          # Save the article to the session.
-          session['article_categories'] = article.categories
-          session['article'] = article.contents
-
-          render "next_article_stream", locals: {
-            article_contents: article.contents,
-            category_scores: preferences.category_scores,
-            article_type: preferences.article_type,
-          }
         end
       end
     end
