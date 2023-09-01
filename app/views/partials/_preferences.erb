@@ -62,14 +62,21 @@
       </table>
     </fieldset>
 
-    <%# Next articles (hidden) %>
-    <% next_articles.each.with_index do |article, i| %>
-      <input type="hidden" name="next_article_<%= i + 1 %>_title" value="<%= article['title'] %>" />
-      <input type="hidden" name="next_article_<%= i + 1 %>_description" value="<%= article['description'] %>" />
-      <input type="hidden" name="next_article_<%= i + 1 %>_url" value="<%= article['url'] %>" />
-      <input type="hidden" name="next_article_<%= i + 1 %>_extract" value="<%= article['extract'] %>" />
-      <input type="hidden" name="next_article_<%= i + 1 %>_thumbnail_source" value="<%= article['thumbnail_source'] %>" />
-      <input type="hidden" name="next_article_<%= i + 1 %>_categories" value="<%= article['categories'].to_json.gsub('"', '``') %>" />
-    <% end %>
+    <%# Next article(s) %>
+    <fieldset data-controller="next-articles" style="display:none">
+      <% next_articles.each.with_index do |article, i| %>
+        <%= partial "partials/next_article_hidden_inputs", locals: { article:, index: i } %>
+      <% end %>
+
+      <%# Streamed next article(s) %>
+      <% (next_articles.count..(max_next_articles - 1)).map do |i| %>
+        <turbo-stream-source
+          id="next-article-<%= i %>"
+          src="/next?next_articles_count=<%= next_articles.count %>"
+          data-next-articles-target="stream"
+        >
+        </turbo-stream-source>
+      <% end %>
+    </fieldset>
   <% end %>
 </div>

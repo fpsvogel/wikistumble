@@ -1,0 +1,6 @@
+<input type="hidden" name="next_article_<%= index %>_title" value="<%= article['title'] %>" />
+<input type="hidden" name="next_article_<%= index %>_description" value="<%= article['description'] %>" />
+<input type="hidden" name="next_article_<%= index %>_url" value="<%= article['url'] %>" />
+<input type="hidden" name="next_article_<%= index %>_extract" value="<%= article['extract'] %>" />
+<input type="hidden" name="next_article_<%= index %>_thumbnail_source" value="<%= article['thumbnail_source'] %>" />
+<input type="hidden" name="next_article_<%= index %>_categories" value="<%= article['categories'].to_json.gsub('"', '``') %>" />

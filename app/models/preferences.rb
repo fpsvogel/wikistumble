@@ -38,7 +38,7 @@ class Preferences
   def self.from_params(params:, article_categories:)
     new(
       category_scores: extract_category_scores_from_params(params, params['reaction'], article_categories),
-      article_type: params['article_type'],
+      article_type: params['article_type'] || :any,
     )
   end
 

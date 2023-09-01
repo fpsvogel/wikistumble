@@ -1,5 +1,10 @@
 # A container for a Wikipedia article's categories and summary contents.
 class Article
+  # @return [Array<Symbol>]
+  def self.attributes
+    [:title, :description, :url, :extract, :thumbnail_source, :categories]
+  end
+
   # Fetches a new Wikipedia article and extracts its contents and categories
   # into a new Article object.
   # @param preferences [Preferences]
@@ -60,13 +65,8 @@ class Article
 
   # @return [Hash]
   def to_h
-    {
-      title: @title,
-      description: @description,
-      url: @url,
-      extract: @extract,
-      thumbnail_source: @thumbnail_source,
-      categories: @categories,
-    }
+    self.class.attributes
+      .map { [_1.to_s, instance_variable_get("@#{_1}")] }
+      .to_h
   end
 end

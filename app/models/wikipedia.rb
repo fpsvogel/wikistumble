@@ -48,7 +48,7 @@ class Wikipedia
   # @param type [String, Symbol] any, good, or featured.
   # @return [Hash] the article summary.
   def random_article(type: :any)
-    if type.to_sym == :any
+    if type.nil? || type.to_sym == :any
       summary_url = "https://en.wikipedia.org/api/rest_v1/page/random/summary"
       JSON.parse(URI.open(summary_url).read)
     else # good or featured
@@ -57,7 +57,8 @@ class Wikipedia
 
   rescue OpenURI::HTTPError => e
     if Config.development?
-      debugger
+      # debugger # TODO diagnose problem
+      raise e
     else
       raise e
     end
@@ -96,6 +97,7 @@ class Wikipedia
 
     response = JSON.parse(http.request(request).body)
 
+    # TODO sometimes .values causes a NoMethodError for nil
     ["prediction", "probability"].map { |key|
       response.dig("enwiki", "scores").values.first.dig("articletopic", "score", key)
     }

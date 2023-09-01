@@ -1,7 +1,7 @@
 <% content_for :title, "Wiki Stumble: Explore Wikipedia" %>
 <% content_for :theme, theme %>
 
-<div class="row flex-edges" style="margin-bottom:0;">
+<div class="row flex-edges" style="margin-bottom:0">
   <h1>Wiki Stumble</h1>
 
   <%= partial "partials/theme_switcher" %>
@@ -11,4 +11,4 @@
 
 <%= partial "partials/reaction_buttons" %>
 <%= partial "partials/article", locals: article_contents %>
-<%= partial "partials/preferences", locals: { article_type:, category_scores:, next_articles: } %>
+<%= partial "partials/preferences", locals: { article_type:, category_scores:, next_articles:, max_next_articles: } %>

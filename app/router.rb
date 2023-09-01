@@ -16,7 +16,10 @@ class Router < Roda
   plugin :flash
   plugin :turbo
   plugin :status_303 # for Turbo
+  plugin :streaming
   plugin :enhanced_logger if Config.development?
+
+  MAX_NEXT_ARTICLES = 5 # article buffer size
 
   path(:root, "/")
   path(:next, "/next")
@@ -37,14 +40,12 @@ class Router < Roda
 
       preferences = Preferences.from_session(session)
 
-      # TODO if next_articles is nil (meaning the user refreshed the page),
-      # open a new thread and fetch and stream next articles.
-
       view "home", locals: {
         article_contents: session['article'].except('categories'),
         category_scores: preferences.category_scores,
         article_type: preferences.article_type,
         next_articles: next_articles || [],
+        max_next_articles: MAX_NEXT_ARTICLES,
         theme: session['theme'],
       }
     end
@@ -60,7 +61,7 @@ class Router < Roda
         session['article_type'] = preferences.article_type
         session['category_scores'] = preferences.compressed_category_scores
 
-        # Extract next articles (article buffer) from params.
+        # Extract next articles buffer from params.
         next_articles = r.params
           .filter { |k, _v| k.start_with?('next_article_') }
           .map { |k, v|
@@ -68,7 +69,7 @@ class Router < Roda
 
             [attribute, v]
           }
-          .each_slice(6)
+          .each_slice(Article.attributes.count)
           .map { |slice|
             # Double quotes were replaced with two backticks in _preferences.erb
             # in order for the array of strings to be stored in an HTML attribute.
@@ -78,7 +79,7 @@ class Router < Roda
           }
           .map(&:to_h)
 
-        # Fetch the next article if the article buffer in params is empty.
+        # Immediately fetch the next article if the buffer from params is empty.
         article = next_articles.shift
         retries = 2
 
@@ -90,8 +91,6 @@ class Router < Roda
           end
         end
 
-        # TODO open a new thread and fetch and stream next article(s) to fill the buffer.
-
         if article
           session['article'] = article
 
@@ -100,11 +99,49 @@ class Router < Roda
             category_scores: preferences.category_scores,
             article_type: preferences.article_type,
             next_articles: next_articles,
+            max_next_articles: MAX_NEXT_ARTICLES,
           }
         else
           flash['error'] = "Try again! There was a problem fetching the article."
 
           r.redirect root_path
+        end
+      end
+
+      r.get true do
+        # The next articles buffer is filled via a streamed response from this
+        # this request, after POST /next which has shown the next buffered
+        # article. This way, the POST isn't blocked by the Wikipedia API calls,
+        # which can take several seconds.
+
+        response['Content-Type'] = 'text/event-stream;charset=UTF-8'
+        response['X-Accel-Buffering'] = 'no' # for nginx
+        # # Other headers that don't seem necessary but I've seen recommended:
+        # response['Cache-Control'] = 'no-cache'
+        # response['Connection'] = 'keep-alive'
+        # response['Transfer-Encoding'] = 'identity'
+
+        # Preferences have already been saved to the session by POST /next.
+        preferences = Preferences.new(
+          category_scores: session['category_scores'],
+          article_type: session['article_type'],
+        )
+
+        next_articles_count = Integer(r.params['next_articles_count'])
+
+        stream do |out|
+          (next_articles_count..(MAX_NEXT_ARTICLES - 1)).each do |i|
+            next_article = Article.fetch(preferences:, session:).to_h
+
+            turbo_replace = turbo_stream.replace(
+              "next-article-#{i}",
+              partial("partials/next_article_hidden_inputs", locals: { article: next_article, index: i }),
+            )
+
+            out << "data: #{turbo_replace.gsub("\n", ' ')}\n\n"
+          end
+
+          out.close
         end
       end
     end
