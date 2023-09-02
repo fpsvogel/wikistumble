@@ -12,19 +12,24 @@ document.getElementById("theme-input").addEventListener("click", (event) => {
   document.getElementById('submit-theme').click();
 });
 
-// Close SSE connection after the next articles buffer has been filled,
-// i.e. after the last turbo-stream-source on the page has been replaced
-// with hidden inputs containing a new article.
+
+// Long-lived connections of several seconds are made for SSE (server-sent events)
+// that stream new articles into the hidden buffer of next articles.
+// The connections don't close automatically, so they need to be closed manually
+// via the Stimulus controller below.
+
 import { Application, Controller } from "https://unpkg.com/@hotwired/stimulus/dist/stimulus.js"
 window.Stimulus = Application.start()
 
 Stimulus.register("next-articles", class extends Controller {
   static targets = ["stream"]
 
+  // When the page is refreshed.
   disconnect() {
     this.streamTargets.forEach((target) => target.streamSource.close())
   }
 
+  // When a <turbo-stream-source> is replaced with a next article.
   streamTargetDisconnected(target) {
     target.streamSource.close()
   }

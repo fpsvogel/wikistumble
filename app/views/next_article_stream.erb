@@ -1,3 +1,14 @@
+<%# Show the next article. %>
 <%= turbo_stream.replace "article", partial("partials/article", locals: article_contents) %>
-<%= turbo_stream.replace "preferences", partial("partials/preferences", locals: { article_type:, category_scores:, next_articles:, max_next_articles: }) %>
+
+<%# Show updated category scores (based on the user's reaction to the previous article). %>
+<%= turbo_stream.replace "category-scores", partial("partials/category_scores", locals: { category_scores: }) %>
+
+<%# Remove the article (which is now being shown) from the next articles buffer. %>
+<%= turbo_stream.remove_all "#next-articles > *:nth-child(1 of .next-article)" %>
+
+<%# Add a <turbo-stream-source> to the end of the next articles buffer, which will %>
+<%# asynchronously be replaced with a fetched article. %>
+<%= turbo_stream.after_all "#next-articles > *:last-child", partial("partials/turbo_stream_source") %>
+
 <%= turbo_stream.remove "flash" %>

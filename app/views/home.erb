@@ -10,5 +10,24 @@
 <%= partial "partials/flash" %>
 
 <%= partial "partials/reaction_buttons" %>
+
 <%= partial "partials/article", locals: article_contents %>
-<%= partial "partials/preferences", locals: { article_type:, category_scores:, next_articles:, max_next_articles: } %>
+
+<% form id: "next", method: :post, action: next_path do |f| %>
+  <%# There's no submit button here. The reaction buttons (outside this form) are the submit buttons. %>
+
+  <%= partial "partials/article_type", locals: { article_type: } %>
+  <%= partial "partials/category_scores", locals: { category_scores: } %>
+
+  <%# Next articles %>
+  <fieldset id="next-articles" data-controller="next-articles" style="display:none">
+    <% next_articles.each.with_index do |article, i| %>
+      <%= partial "partials/next_article_hidden_inputs", locals: { article:, id: Time.now.to_f } %>
+    <% end %>
+
+    <%# Stream sources for next articles that are not yet fetched %>
+    <% next_articles.count.upto(max_next_articles - 1) do %>
+      <%= partial "partials/turbo_stream_source" %>
+    <% end %>
+  </fieldset>
+<% end %>

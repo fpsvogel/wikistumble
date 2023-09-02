@@ -19,7 +19,8 @@ class Router < Roda
   plugin :streaming
   plugin :enhanced_logger if Config.development?
 
-  MAX_NEXT_ARTICLES = 5 # article buffer size
+  MAX_NEXT_ARTICLES = 3 # article buffer size
+  FETCH_RETRIES = 2
 
   path(:root, "/")
   path(:next, "/next")
@@ -65,7 +66,7 @@ class Router < Roda
         next_articles = r.params
           .filter { |k, _v| k.start_with?('next_article_') }
           .map { |k, v|
-            attribute = k[/(?<=\d_).+/] # e.g. "title" in "next_article_0_title"
+            attribute = k[/(?<=\d_)[a-z_]+/] # e.g. "title" in "next_article_26485.2632_title"
 
             [attribute, v]
           }
@@ -81,7 +82,7 @@ class Router < Roda
 
         # Immediately fetch the next article if the buffer from params is empty.
         article = next_articles.shift
-        retries = 2
+        retries = FETCH_RETRIES
 
         until article || retries < 0 do
           begin
@@ -97,9 +98,7 @@ class Router < Roda
           render "next_article_stream", locals: {
             article_contents: session['article'].except('categories'),
             category_scores: preferences.category_scores,
-            article_type: preferences.article_type,
-            next_articles: next_articles,
-            max_next_articles: MAX_NEXT_ARTICLES,
+            next_articles_count: next_articles.count,
           }
         else
           flash['error'] = "Try again! There was a problem fetching the article."
@@ -114,6 +113,8 @@ class Router < Roda
         # article. This way, the POST isn't blocked by the Wikipedia API calls,
         # which can take several seconds.
 
+        puts "THREADS LEFT: #{JSON.parse(Puma.stats)['pool_capacity']}"
+
         response['Content-Type'] = 'text/event-stream;charset=UTF-8'
         response['X-Accel-Buffering'] = 'no' # for nginx
         # # Other headers that don't seem necessary but I've seen recommended:
@@ -127,19 +128,31 @@ class Router < Roda
           article_type: session['article_type'],
         )
 
-        next_articles_count = Integer(r.params['next_articles_count'])
+        # next_articles_count = Integer(r.params['next_articles_count'])
 
         stream do |out|
-          (next_articles_count..(MAX_NEXT_ARTICLES - 1)).each do |i|
-            next_article = Article.fetch(preferences:, session:).to_h
+          # (next_articles_count..(MAX_NEXT_ARTICLES - 1)).each do |i|
 
-            turbo_replace = turbo_stream.replace(
-              "next-article-#{i}",
-              partial("partials/next_article_hidden_inputs", locals: { article: next_article, index: i }),
-            )
+            next_article = nil
+            retries = FETCH_RETRIES
 
-            out << "data: #{turbo_replace.gsub("\n", ' ')}\n\n"
-          end
+            until next_article || retries < 0 do
+              begin
+                next_article = Article.fetch(preferences:, session:).to_h
+              rescue OpenURI::HTTPError
+                retries -= 1
+              end
+            end
+
+            if next_article
+              turbo_replace = turbo_stream.replace_all(
+                "#next-articles > turbo-stream-source:first-of-type",
+                partial("partials/next_article_hidden_inputs", locals: { article: next_article, id: Time.now.to_f }),
+              )
+
+              out << "data: #{turbo_replace.gsub("\n", ' ')}\n\n"
+            end
+          # end
 
           out.close
         end

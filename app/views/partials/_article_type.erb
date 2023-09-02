@@ -1,0 +1,36 @@
+<fieldset class="form-group margin-top-large">
+  <legend>Article type:</legend>
+
+  <label class="paper-radio margin-right" style="display:inline-block" for="article_type_any">
+    <input
+      type="radio"
+      value="any"
+      <%= 'checked="checked"' if article_type&.to_sym == :any %>
+      name="article_type"
+      id="article_type_any"
+    >
+    <span>Any</span>
+  </label>
+
+  <label class="paper-radio margin-right" style="display:inline-block" for="article_type_good">
+    <input
+      type="radio"
+      value="good"
+      <%= 'checked="checked"' if article_type&.to_sym == :good %>
+      name="article_type"
+      id="article_type_good"
+    >
+    <span>Good</span>
+  </label>
+
+  <label class="paper-radio" style="display:inline-block" for="article_type_featured">
+    <input
+      type="radio"
+      value="featured"
+      <%= 'checked="checked"' if article_type&.to_sym == :featured %>
+      name="article_type"
+      id="article_type_featured"
+    >
+    <span>Featured</span>
+  </label>
+</fieldset>
