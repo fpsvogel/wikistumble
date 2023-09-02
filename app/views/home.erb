@@ -22,6 +22,7 @@
   <%# Next articles %>
   <fieldset id="next-articles" data-controller="next-articles" style="display:none">
     <% next_articles.each.with_index do |article, i| %>
+      <%# id for unique input names in the form. %>
       <%= partial "partials/next_article_hidden_inputs", locals: { article:, id: Time.now.to_f } %>
     <% end %>
 

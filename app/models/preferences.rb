@@ -1,4 +1,4 @@
-# Article preferences, input via forms.
+# Article preferences, inputted via a form.
 class Preferences
   attr_reader :category_scores, :article_type
 

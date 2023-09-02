@@ -19,7 +19,7 @@ class Router < Roda
   plugin :streaming
   plugin :enhanced_logger if Config.development?
 
-  MAX_NEXT_ARTICLES = 8 # article buffer size
+  MAX_NEXT_ARTICLES = 8 # size of the next articles buffer
   FETCH_RETRIES = 2
 
   path(:root, "/")
@@ -58,32 +58,14 @@ class Router < Roda
           article_categories: session['article']['categories'],
         )
 
-        # Save preferences to the session.
         session['article_type'] = preferences.article_type
         session['category_scores'] = preferences.compressed_category_scores
 
-        # Extract next articles buffer from params.
-        next_articles = r.params
-          .filter { |k, _v| k.start_with?('next_article_') }
-          .map { |k, v|
-            attribute = k[/(?<=\d_)[a-z_]+/] # e.g. "title" in "next_article_26485.2632_title"
-
-            [attribute, v]
-          }
-          .each_slice(Article.attributes.count)
-          .map { |slice|
-            # Double quotes were replaced with two backticks in _preferences.erb
-            # in order for the array of strings to be stored in an HTML attribute.
-            categories = [slice.last[0], JSON.parse(slice.last[1].gsub('``', '"'))]
-
-            [*slice[..-2], categories]
-          }
-          .map(&:to_h)
+        next_articles = ParamsHelper.next_articles(r.params)
+        article = next_articles.shift
 
         # Immediately fetch the next article if the buffer from params is empty.
-        article = next_articles.shift
         retries = FETCH_RETRIES
-
         until article || retries < 0 do
           begin
             article = Article.fetch(preferences:, session:).to_h
@@ -98,7 +80,6 @@ class Router < Roda
           render "next_article_stream", locals: {
             article_contents: session['article'].except('categories'),
             category_scores: preferences.category_scores,
-            next_articles_count: next_articles.count,
           }
         else
           flash['error'] = "Try again! There was a problem fetching the article."
@@ -107,20 +88,19 @@ class Router < Roda
         end
       end
 
+      # The next articles buffer (hidden inputs in the form) is filled via SSE
+      # (server-sent events) streamed responses to GET /next, after POST /next
+      # has shown the next buffered article. This way, the POST isn't blocked by
+      # the Wikipedia API calls, which can take several seconds.
       r.get true do
-        # The next articles buffer is filled via a streamed response from this
-        # this request, after POST /next which has shown the next buffered
-        # article. This way, the POST isn't blocked by the Wikipedia API calls,
-        # which can take several seconds.
-
         response['Content-Type'] = 'text/event-stream;charset=UTF-8'
         response['X-Accel-Buffering'] = 'no' # for nginx
-        # # Other headers that don't seem necessary but I've seen recommended:
+        # # Other headers that don't seem necessary but I've seen recommended for SSE:
         # response['Cache-Control'] = 'no-cache'
         # response['Connection'] = 'keep-alive'
         # response['Transfer-Encoding'] = 'identity'
 
-        # Preferences have already been saved to the session by POST /next.
+        # Updated preferences have already been saved to the session by POST /next.
         preferences = Preferences.new(
           category_scores: session['category_scores'],
           article_type: session['article_type'],
@@ -129,7 +109,6 @@ class Router < Roda
         stream do |out|
           next_article = nil
           retries = FETCH_RETRIES
-
           until next_article || retries < 0 do
             begin
               next_article = Article.fetch(preferences:, session:).to_h
@@ -139,9 +118,15 @@ class Router < Roda
           end
 
           if next_article
+            # Buffer the newly fetched article by replacing the first
+            # <turbo-stream-source> with hidden inputs containing the article.
             turbo_replace = turbo_stream.replace_all(
               "#next-articles > turbo-stream-source:first-of-type",
-              partial("partials/next_article_hidden_inputs", locals: { article: next_article, id: Time.now.to_f }),
+              partial(
+                "partials/next_article_hidden_inputs",
+                # id for unique input names in the form.
+                locals: { article: next_article, id: Time.now.to_f },
+              ),
             )
 
             out << "data: #{turbo_replace.gsub("\n", ' ')}\n\n"

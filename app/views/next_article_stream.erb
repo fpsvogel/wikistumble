@@ -1,10 +1,10 @@
 <%# Show the next article. %>
 <%= turbo_stream.replace "article", partial("partials/article", locals: article_contents) %>
 
-<%# Show updated category scores (based on the user's reaction to the previous article). %>
+<%# Replace category scores (updated based on the user's reaction to the previous article). %>
 <%= turbo_stream.replace "category-scores", partial("partials/category_scores", locals: { category_scores: }) %>
 
-<%# Remove the article (which is now being shown) from the next articles buffer. %>
+<%# Remove the article (the one now being shown) from the next articles buffer. %>
 <%= turbo_stream.remove_all "#next-articles > *:nth-child(1 of .next-article)" %>
 
 <%# Add a <turbo-stream-source> to the end of the next articles buffer, which will %>
