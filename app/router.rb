@@ -19,7 +19,7 @@ class Router < Roda
   plugin :streaming
   plugin :enhanced_logger if Config.development?
 
-  MAX_NEXT_ARTICLES = 3 # article buffer size
+  MAX_NEXT_ARTICLES = 8 # article buffer size
   FETCH_RETRIES = 2
 
   path(:root, "/")
@@ -113,8 +113,6 @@ class Router < Roda
         # article. This way, the POST isn't blocked by the Wikipedia API calls,
         # which can take several seconds.
 
-        puts "THREADS LEFT: #{JSON.parse(Puma.stats)['pool_capacity']}"
-
         response['Content-Type'] = 'text/event-stream;charset=UTF-8'
         response['X-Accel-Buffering'] = 'no' # for nginx
         # # Other headers that don't seem necessary but I've seen recommended:
@@ -128,31 +126,26 @@ class Router < Roda
           article_type: session['article_type'],
         )
 
-        # next_articles_count = Integer(r.params['next_articles_count'])
-
         stream do |out|
-          # (next_articles_count..(MAX_NEXT_ARTICLES - 1)).each do |i|
+          next_article = nil
+          retries = FETCH_RETRIES
 
-            next_article = nil
-            retries = FETCH_RETRIES
-
-            until next_article || retries < 0 do
-              begin
-                next_article = Article.fetch(preferences:, session:).to_h
-              rescue OpenURI::HTTPError
-                retries -= 1
-              end
+          until next_article || retries < 0 do
+            begin
+              next_article = Article.fetch(preferences:, session:).to_h
+            rescue OpenURI::HTTPError
+              retries -= 1
             end
+          end
 
-            if next_article
-              turbo_replace = turbo_stream.replace_all(
-                "#next-articles > turbo-stream-source:first-of-type",
-                partial("partials/next_article_hidden_inputs", locals: { article: next_article, id: Time.now.to_f }),
-              )
+          if next_article
+            turbo_replace = turbo_stream.replace_all(
+              "#next-articles > turbo-stream-source:first-of-type",
+              partial("partials/next_article_hidden_inputs", locals: { article: next_article, id: Time.now.to_f }),
+            )
 
-              out << "data: #{turbo_replace.gsub("\n", ' ')}\n\n"
-            end
-          # end
+            out << "data: #{turbo_replace.gsub("\n", ' ')}\n\n"
+          end
 
           out.close
         end

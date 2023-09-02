@@ -98,6 +98,7 @@ class Wikipedia
     response = JSON.parse(http.request(request).body)
 
     # TODO sometimes .values causes a NoMethodError for nil
+    # (but this seems not to happen anymore?)
     ["prediction", "probability"].map { |key|
       response.dig("enwiki", "scores").values.first.dig("articletopic", "score", key)
     }
