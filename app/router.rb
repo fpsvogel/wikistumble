@@ -16,7 +16,6 @@ class Router < Roda
   plugin :flash
   plugin :turbo
   plugin :status_303 # for Turbo
-  plugin :streaming
   plugin :enhanced_logger if Config.development?
 
   MAX_NEXT_ARTICLES = 8 # size of the next articles buffer
@@ -93,9 +92,11 @@ class Router < Roda
       # has shown the next buffered article. This way, the POST isn't blocked by
       # the Wikipedia API calls, which can take several seconds.
       r.get true do
-        response['Content-Type'] = 'text/event-stream;charset=UTF-8'
-        response['X-Accel-Buffering'] = 'no' # for nginx
-        # # Other headers that don't seem necessary but I've seen recommended for SSE:
+        # # These headers aren't necessary in my case, but I've seen them
+        # # recommended for SSE:
+        # # I would need to set content type, except it's set in StreamHelper.
+        # response['Content-Type'] = 'text/event-stream'
+        # response['X-Accel-Buffering'] = 'no' # if deploying to Nginx
         # response['Cache-Control'] = 'no-cache'
         # response['Connection'] = 'keep-alive'
         # response['Transfer-Encoding'] = 'identity'
@@ -106,12 +107,12 @@ class Router < Roda
           article_type: session['article_type'],
         )
 
-        stream do |out|
+        StreamHelper.async_stream(request:) do |out|
           next_article = nil
           retries = FETCH_RETRIES
           until next_article || retries < 0 do
             begin
-              next_article = Article.fetch(preferences:, session:).to_h
+              next_article = Article.fetch(preferences:).to_h
             rescue OpenURI::HTTPError
               retries -= 1
             end
@@ -129,10 +130,8 @@ class Router < Roda
               ),
             )
 
-            out << "data: #{turbo_replace.gsub("\n", ' ')}\n\n"
+            out.write("data: #{turbo_replace.gsub("\n", ' ')}\n\n")
           end
-
-          out.close
         end
       end
     end
@@ -152,7 +151,7 @@ class Router < Roda
         # invalid CSRF tokens, so that's not an option.
         response.status = 303
 
-        "" # Empty response body, so that nothing is rendered.
+        "" # empty response body so that nothing is rendered
       end
     end
   end

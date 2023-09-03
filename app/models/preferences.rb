@@ -8,7 +8,7 @@ class Preferences
   def self.from_session(session)
     new(
       category_scores: decompress_category_scores_from_session(session),
-      article_type: session['article_type']&.to_sym || :any,
+      article_type: session['article_type']&.to_sym,
     )
   end
 
@@ -38,7 +38,7 @@ class Preferences
   def self.from_params(params:, article_categories:)
     new(
       category_scores: extract_category_scores_from_params(params, params['reaction'], article_categories),
-      article_type: params['article_type'] || :any,
+      article_type: params['article_type'],
     )
   end
 

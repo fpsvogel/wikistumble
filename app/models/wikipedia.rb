@@ -16,6 +16,7 @@ class Wikipedia
   CANDIDATE_CHANCE = 2 # Multiplied by (candidate_score / top_category_score)
   # to get a probability that a candidate will be selected early, before
   # MAX_ARTICLE_QUERIES is reached.
+  DEFAULT_ARTICLE_TYPE = :good
 
   # @param article_type [String, Symbol]
   # @param category_scores [Hash]
@@ -47,8 +48,10 @@ class Wikipedia
   # Fetches the summary of a random article.
   # @param type [String, Symbol] any, good, or featured.
   # @return [Hash] the article summary.
-  def random_article(type: :any)
-    if type.nil? || type.to_sym == :any
+  def random_article(type:)
+    type ||= DEFAULT_ARTICLE_TYPE
+
+    if type.to_sym == :any
       summary_url = "https://en.wikipedia.org/api/rest_v1/page/random/summary"
       JSON.parse(URI.open(summary_url).read)
     else # good or featured

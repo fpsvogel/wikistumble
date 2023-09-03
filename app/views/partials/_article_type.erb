@@ -16,7 +16,7 @@
     <input
       type="radio"
       value="good"
-      <%= 'checked="checked"' if article_type&.to_sym == :good %>
+      <%= 'checked="checked"' if article_type.nil? || article_type.to_sym == :good %>
       name="article_type"
       id="article_type_good"
     >
