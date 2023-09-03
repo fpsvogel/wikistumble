@@ -9,7 +9,7 @@ class Article
   # into a new Article object.
   # @param preferences [Preferences]
   # @return [Article] the new Article.
-  def self.fetch(preferences:, session:)
+  def self.fetch(preferences:)
     new(
       article_type: preferences.article_type,
       category_scores: preferences.category_scores,
