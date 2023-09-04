@@ -4,6 +4,6 @@
   <input type="hidden" name="next_article_<%= id %>_description" value="<%= article['description'].gsub('"', '``') %>" />
   <input type="hidden" name="next_article_<%= id %>_url" value="<%= article['url'].gsub('"', '``') %>" />
   <input type="hidden" name="next_article_<%= id %>_extract" value="<%= article['extract'].gsub('"', '``') %>" />
-  <input type="hidden" name="next_article_<%= id %>_thumbnail_source" value="<%= article['thumbnail_source'].gsub('"', '``') %>" />
+  <input type="hidden" name="next_article_<%= id %>_thumbnail_source" value="<%= article['thumbnail_source']&.gsub('"', '``') %>" />
   <input type="hidden" name="next_article_<%= id %>_categories" value="<%= article['categories'].to_json.gsub('"', '``') %>" />
 </div>

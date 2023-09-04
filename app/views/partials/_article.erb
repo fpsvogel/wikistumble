@@ -5,7 +5,9 @@
   <p class="truncate"><%= link_to url.gsub('``', '"'), url.gsub('``', '"'), target: "_blank" %></p>
   <p><%= extract.gsub('``', '"') %></p>
 
-  <% unless thumbnail_source.nil? %>
+  <% if thumbnail_source.nil? || thumbnail_source.empty? %>
+    <p><em>No image available.</em></p>
+  <% else %>
     <img src="<%= thumbnail_source.gsub('``', '"') %>">
   <% end %>
 </div>
