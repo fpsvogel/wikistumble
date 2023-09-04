@@ -60,7 +60,7 @@ class Wikipedia
 
   rescue OpenURI::HTTPError => e
     if Config.development?
-      # debugger # TODO diagnose problem
+      # debugger # TODO formatting of the URL may need adjustment; a rare error.
       raise e
     else
       raise e
@@ -100,8 +100,7 @@ class Wikipedia
 
     response = JSON.parse(http.request(request).body)
 
-    # TODO sometimes .values causes a NoMethodError for nil
-    # (but this seems not to happen anymore?)
+    # TODO in rare cases, .values causes a NoMethodError for nil
     ["prediction", "probability"].map { |key|
       response.dig("enwiki", "scores").values.first.dig("articletopic", "score", key)
     }

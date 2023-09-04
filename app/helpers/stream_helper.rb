@@ -26,7 +26,8 @@ class StreamHelper
       # which occasionally happens, I think due to race conditions caused by
       # multiple threads streaming back at the same time. In any case, after the
       # connection is automatically re-opened, another article is fetched and
-      # the <turbo-stream-source> is replaced as expected.
+      # the <turbo-stream-source> is replaced as expected. The retry also helps
+      # if there was an error fetching the article.
       out.close
     end
 

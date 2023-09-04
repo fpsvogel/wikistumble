@@ -68,7 +68,7 @@ class Router < Roda
         until article || retries < 0 do
           begin
             article = Article.fetch(preferences:).to_h
-          rescue OpenURI::HTTPError
+          rescue
             retries -= 1
           end
         end
@@ -113,7 +113,7 @@ class Router < Roda
           until next_article || retries < 0 do
             begin
               next_article = Article.fetch(preferences:).to_h
-            rescue OpenURI::HTTPError
+            rescue
               retries -= 1
             end
           end
