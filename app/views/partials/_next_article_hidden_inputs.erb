@@ -1,8 +1,9 @@
 <div class="next-article">
-  <input type="hidden" name="next_article_<%= id %>_title" value="<%= article['title'] %>" />
-  <input type="hidden" name="next_article_<%= id %>_description" value="<%= article['description'] %>" />
-  <input type="hidden" name="next_article_<%= id %>_url" value="<%= article['url'] %>" />
-  <input type="hidden" name="next_article_<%= id %>_extract" value="<%= article['extract'] %>" />
-  <input type="hidden" name="next_article_<%= id %>_thumbnail_source" value="<%= article['thumbnail_source'] %>" />
+  <%# Replace double quotes with two backticks so that the strings can be stored in HTML attributes. %>
+  <input type="hidden" name="next_article_<%= id %>_title" value="<%= article['title'].gsub('"', '``') %>" />
+  <input type="hidden" name="next_article_<%= id %>_description" value="<%= article['description'].gsub('"', '``') %>" />
+  <input type="hidden" name="next_article_<%= id %>_url" value="<%= article['url'].gsub('"', '``') %>" />
+  <input type="hidden" name="next_article_<%= id %>_extract" value="<%= article['extract'].gsub('"', '``') %>" />
+  <input type="hidden" name="next_article_<%= id %>_thumbnail_source" value="<%= article['thumbnail_source'].gsub('"', '``') %>" />
   <input type="hidden" name="next_article_<%= id %>_categories" value="<%= article['categories'].to_json.gsub('"', '``') %>" />
 </div>

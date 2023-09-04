@@ -13,13 +13,17 @@ class ParamsHelper
         [attribute, v]
       }
       .each_slice(Article.attributes.count)
-      .map { |slice|
-        # Double quotes were replaced with two backticks in _next_article_hidden_inputs.erb
-        # in order for the array of strings to be stored in an HTML attribute.
-        categories = [slice.last[0], JSON.parse(slice.last[1].gsub('``', '"'))]
-
-        [*slice[..-2], categories]
-      }
       .map(&:to_h)
+      .map { |hash|
+        hash.transform_values.with_index { |v, i|
+          if i == Article.attributes.index(:categories)
+            # Change backticks back into double quotes; see _next_article_hidden_inputs.erb.
+            # The same is done for the article contents in _article.erb.
+            JSON.parse(v.gsub('``', '"'))
+          else
+            v
+          end
+        }
+      }
   end
 end
