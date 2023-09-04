@@ -18,7 +18,7 @@ class Router < Roda
   plugin :status_303 # for Turbo
   plugin :enhanced_logger if Config.development?
 
-  MAX_NEXT_ARTICLES = 8 # size of the next articles buffer
+  MAX_NEXT_ARTICLES = 10 # size of the next articles buffer
   FETCH_RETRIES = 2
 
   path(:root, "/")
