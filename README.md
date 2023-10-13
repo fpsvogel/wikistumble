@@ -2,6 +2,12 @@
 
 A Roda app that's like StumbleUpon for Wikipedia, showing summaries of articles tailored to the user's interests and likes/dislikes. [Here's the live site](https://wikistumble.com/) deployed to Render.
 
+## Demo
+
+Here's a peek into the invisible queue of next articles being filled and re-filled dynamically via Turbo Streams and server-sent events.
+
+![Wiki Stumble demo](https://github.com/fpsvogel/wikistumble/blob/main/wiki-stumble-demo.gif)
+
 ## Why?
 
 This is a remake of [a Rails app by the same name](https://github.com/fpsvogel/wikistumble-rails) that I made two years ago. This time around I wanted to do things a little different:
@@ -12,8 +18,8 @@ This is a remake of [a Rails app by the same name](https://github.com/fpsvogel/w
 
 Read more in my blog posts:
 
-- [Roda + Turbo Streams = ❤️: porting Wiki Stumble from Rails](https://fpsvogel.com/posts/2023/roda-app-with-hotwire-turbo-streams).
-- [Server-sent events for asynchronous API calls in a Roda app](https://fpsvogel.com/posts/2023/ruby-server-sent-events-for-async-api-calls).
+- [Roda + Turbo Streams = ❤️: porting Wiki Stumble from Rails](https://fpsvogel.com/posts/2023/roda-app-with-hotwire-turbo-streams)
+- [Server-sent events for asynchronous API calls in a Roda app](https://fpsvogel.com/posts/2023/ruby-server-sent-events-for-async-api-calls)
 
 ## License
 
