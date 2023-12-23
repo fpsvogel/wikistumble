@@ -9,7 +9,7 @@ class Router < Roda
   plugin :public
   plugin :render, views: Config.root.join("app/views")
   plugin :partials
-  plugin :forme
+  plugin :forme_route_csrf
   plugin :content_for
   plugin :link_to
   plugin :path
